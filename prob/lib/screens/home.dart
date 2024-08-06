@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:prob/api/get_budget.dart';
+import 'package:prob/api/get_total_consume.dart';
+import 'package:prob/model/budget_model.dart';
+import 'package:prob/model/total_model.dart';
+import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/screens/consumption_history.dart';
+import 'package:prob/screens/main_page.dart';
 import 'package:prob/screens/profile.dart';
-import 'package:prob/widgets/home_body.dart';
-import 'package:prob/widgets/home_header.dart';
-import 'package:prob/widgets/total_card.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,6 +18,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late BudgetModel budget;
+  late TotalModel total;
 
   @override
   void initState() {
@@ -27,29 +33,58 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
+//set되기 전에 get하는 문제로 사용불가. (totalCard에서 get시도  >> 결과 null)
+  // void setData() async {
+  //   final token = context.read<AuthProvider>().token;
+
+  //   // BudgetProvider와 TotalProvider에 데이터 설정
+  //   final budgetProvider = Provider.of<BudgetProvider>(context, listen: false);
+  //   final totalProvider = Provider.of<TotalProvider>(context, listen: false);
+
+  //   try {
+  //     final budget = await GetBudget.readBudget(token);
+  //     final total = await GetTotalConsume.readTotalConsume(token);
+  //     budgetProvider.setBudget(budget);
+  //     totalProvider.setTotal(total);
+  //   } catch (e) {
+  //     // 에러 처리
+  //     print(e);
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
+    final token = context.read<AuthProvider>().token;
+
     return Scaffold(
-      body: TabBarView(
-        controller: _tabController,
-        children: const [
-          Padding(
-            padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: FutureBuilder(
+        future: Future.wait([
+          GetBudget.readBudget(token),
+          GetTotalConsume.readTotalConsume(token),
+        ]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            budget = snapshot.data![0] as BudgetModel;
+            total = snapshot.data![1] as TotalModel;
+
+            return TabBarView(
+              controller: _tabController,
               children: [
-                HomeHeader(),
-                TotalCard(),
-                SizedBox(
-                  height: 25,
-                ),
-                HomeBody(),
+                MainPage(
+                    budget: budget.budgetAmount,
+                    total: total.monthTotal), // 페이지 1
+                const Center(child: ConsumptionHistory()), // 페이지 2
+                const Center(child: Profile()), // 페이지 3
               ],
-            ),
-          ),
-          Center(child: ConsumptionHistory()), // 페이지 2
-          Center(child: Profile()), // 페이지 3
-        ],
+            );
+          } else {
+            return const Center(child: Text('No data available'));
+          }
+        },
       ),
       bottomNavigationBar: SizedBox(
         height: 90,

@@ -22,7 +22,7 @@ class HomeHeader extends StatelessWidget {
                 height: 100,
               ),
             ],
-          )
+          ),
         ],
       ),
     );

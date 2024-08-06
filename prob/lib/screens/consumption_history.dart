@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:prob/widgets/history_card.dart';
+import 'package:prob/widgets/history_details.dart';
 import 'package:prob/widgets/home_header.dart';
+import 'package:prob/widgets/add_modal.dart';
 
 class ConsumptionHistory extends StatelessWidget {
   const ConsumptionHistory({super.key});
@@ -29,7 +31,7 @@ class ConsumptionHistory extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        //AddModal(),
+                        AddModal(),
 
                         // HistoryControlBtn(
                         //   label: "????",
@@ -41,7 +43,7 @@ class ConsumptionHistory extends StatelessWidget {
                   SizedBox(
                     height: 35,
                   ),
-                  //HistoryDetails()
+                  HistoryDetails()
                 ],
               ),
             )

@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:prob/widgets/line_widget.dart';
 
 class TotalCard extends StatelessWidget {
-  const TotalCard({super.key});
+  const TotalCard({super.key, this.budget, this.total, this.remainedBudget});
+  final budget;
+  final total;
+  final remainedBudget;
 
+  // void fetchData() {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -62,9 +66,10 @@ class TotalCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Text(
-                    "1500 원",
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700),
+                  Text(
+                    "$total 원",
+                    style: const TextStyle(
+                        fontSize: 32, fontWeight: FontWeight.w700),
                   )
                 ],
               ),
@@ -78,65 +83,76 @@ class TotalCard extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     '이번 달 예산 : ',
                     style: TextStyle(fontSize: 16),
                   ),
                   Text(
-                    '3000 원',
-                    style: TextStyle(fontSize: 16),
+                    '$budget 원',
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
               const SizedBox(
                 height: 6,
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     '남은 예산 : ',
                     style: TextStyle(fontSize: 16),
                   ),
                   Text(
-                    '1500 원',
-                    style: TextStyle(fontSize: 16),
+                    '$remainedBudget 원',
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.end,
-              //   children: [
-              //     ElevatedButton(
-              //       style: ElevatedButton.styleFrom(
-              //         backgroundColor: Colors.pink,
-              //         shadowColor: const Color.fromARGB(255, 231, 144, 173),
-              //         minimumSize: const Size(100, 45),
-              //         elevation: 7,
-              //       ),
-              //       onPressed: () => Navigator.pushNamed(context, '/history'),
-              //       child: const Row(
-              //         children: [
-              //           Text(
-              //             "상세 내역 ",
-              //             style: TextStyle(fontSize: 18, color: Colors.white),
-              //           ),
-              //           Icon(
-              //             Icons.forward_rounded,
-              //             color: Colors.white,
-              //           )
-              //         ],
-              //       ),
-              //     )
-              //   ],
-              // ),
+              //detailGoButton(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class detailGoButton extends StatelessWidget {
+  const detailGoButton({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.pink,
+            shadowColor: const Color.fromARGB(255, 231, 144, 173),
+            minimumSize: const Size(100, 45),
+            elevation: 7,
+          ),
+          onPressed: () => Navigator.pushNamed(context, '/history'),
+          child: const Row(
+            children: [
+              Text(
+                "상세 내역 ",
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              Icon(
+                Icons.forward_rounded,
+                color: Colors.white,
+              )
+            ],
+          ),
+        )
+      ],
     );
   }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:prob/provider/auth_provider.dart';
+import 'package:prob/provider/budget_provider.dart';
+import 'package:prob/provider/category_provider.dart';
 import 'package:prob/provider/look_list_provider.dart';
+import 'package:prob/provider/total_provider.dart';
 import 'package:prob/provider/user_provider.dart';
 import 'package:prob/screens/consumption_history.dart';
 import 'package:prob/screens/home.dart';
@@ -15,6 +19,18 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => UserProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => BudgetProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => TotalProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CategoryProvider(),
         ),
       ],
       child: const MyApp(),
