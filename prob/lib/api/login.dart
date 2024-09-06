@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Login {
-  static String baseUrl = "http://127.0.0.1:8000/token";
+  static String baseUrl = "https://dobu.kro.kr/token";
 
   static Future<Map<String, dynamic>> getToken(
       String email, String password) async {

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 class LookListProvider extends ChangeNotifier {
-  bool _LookList = false;
+  bool _showListView = true;
 
-  bool get showListView => _LookList;
+  bool get showListView => _showListView;
 
-  void toggleView() {
-    _LookList = !_LookList;
-    notifyListeners();
+  // 리스트와 차트를 전환하는 메서드
+  void setView(bool showListView) {
+    _showListView = showListView;
+    notifyListeners(); // UI 갱신을 위해 notifyListeners() 호출
   }
 }

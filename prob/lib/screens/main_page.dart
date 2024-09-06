@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prob/api/get_user.dart';
 import 'package:prob/provider/auth_provider.dart';
+import 'package:prob/widgets/custom_alert.dart';
 import 'package:prob/widgets/home_body.dart';
 import 'package:prob/widgets/home_header.dart';
 import 'package:prob/widgets/total_card.dart';
@@ -24,7 +25,18 @@ class MainPage extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+            return AlertDialog(
+              title: const Text("로그인 만료"),
+              content: const Text("다시 로그인 해주세요."),
+              actions: [
+                TextButton(
+                  child: const Text("확인"),
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(context, '/');
+                  },
+                ),
+              ],
+            );
           } else if (!snapshot.hasData) {
             return const Center(child: Text('No data available'));
           }

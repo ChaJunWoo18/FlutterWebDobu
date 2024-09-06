@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:prob/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:prob/api/login.dart';
+import 'package:prob/widgets/sign_button.dart';
+import 'package:prob/widgets/signup_form.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({super.key});
@@ -22,12 +24,11 @@ class StartPage extends StatelessWidget {
                     'assets/images/logo_dobu.png',
                     width: 250, // 필요에 따라 크기를 조정
                   ),
-                  const Text("돈을 모으자!"),
                 ],
               ),
             ),
             const Expanded(
-              flex: 1,
+              flex: 2,
               child: LoginForm(),
             ),
             const Expanded(
@@ -107,33 +108,54 @@ class _LoginFormState extends State<LoginForm> {
         const SizedBox(height: 20),
 
         // 로그인 버튼
-        ElevatedButton(
+        SignButton(
+          text: '로그인',
           onPressed: () {
             final String email = emailController.text;
             final String password = passwordController.text;
             login(email, password);
           },
-          child: const Text('로그인'),
         ),
+        const SizedBox(height: 10), // 버튼 사이의 간격
+        SignButton(
+          text: '회원가입',
+          onPressed: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true, // 모달이 화면을 꽉 채우도록 설정
+              builder: (BuildContext context) {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: const SignupForm(),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+
         const SizedBox(height: 20),
 
         // 아이디 찾기, 비밀번호 찾기 텍스트
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextButton(
-              onPressed: () {
-                // 아이디 찾기 클릭 시 동작
-              },
-              child: const Text('아이디 찾기'),
-            ),
-            const Text(' | '),
-            TextButton(
-              onPressed: () {},
-              child: const Text('비밀번호 찾기'),
-            ),
-          ],
-        ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.center,
+        //   children: <Widget>[
+        //     TextButton(
+        //       onPressed: () {
+        //         // 아이디 찾기 클릭 시 동작
+        //       },
+        //       child: const Text('아이디 찾기'),
+        //     ),
+        //     const Text(' | '),
+        //     TextButton(
+        //       onPressed: () {},
+        //       child: const Text('비밀번호 찾기'),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }

@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class GetUser {
-  static String baseUrl = "http://127.0.0.1:8000/users";
+  static String baseUrl = "https://dobu.kro.kr/users";
 
   static Future<Map<String, dynamic>> readUser(String? token) async {
     const extraUrl = '/get/me';
@@ -17,10 +17,10 @@ class GetUser {
     );
 
     if (response.statusCode == 200) {
-      //print(response.body);
-      return json.decode(response.body);
+      final decodedResponse = utf8.decode(response.bodyBytes);
+      return json.decode(decodedResponse);
     } else {
-      throw Exception('get user failed. Token may have expired');
+      throw Exception('get user failed');
     }
   }
 }

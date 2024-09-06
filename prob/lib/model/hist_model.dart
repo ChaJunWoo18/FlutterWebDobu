@@ -3,7 +3,7 @@ class HistModel {
   final String categoryName;
   final int amount;
   final String receiver;
-  final DateTime date;
+  final String date;
 
   HistModel({
     required this.id,

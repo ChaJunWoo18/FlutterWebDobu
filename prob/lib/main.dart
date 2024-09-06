@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/provider/budget_provider.dart';
 import 'package:prob/provider/category_provider.dart';
+import 'package:prob/provider/filter_option_provider.dart';
 import 'package:prob/provider/look_list_provider.dart';
+import 'package:prob/provider/period_provider.dart';
 import 'package:prob/provider/total_provider.dart';
 import 'package:prob/provider/user_provider.dart';
 import 'package:prob/screens/consumption_history.dart';
@@ -31,6 +33,12 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => CategoryProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FilterOptionsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => Periodprovider(),
         ),
       ],
       child: const MyApp(),

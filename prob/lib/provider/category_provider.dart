@@ -17,12 +17,12 @@ class CategoryProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedCategory(String selectedCategory) {
+  void setSelectedCategory(String? selectedCategory) {
     _selectedCategory = selectedCategory;
     notifyListeners();
   }
 
-  void removeCategory(String categoryName) {
+  void removeCategory(String? categoryName) {
     _category.remove(categoryName);
     notifyListeners();
   }

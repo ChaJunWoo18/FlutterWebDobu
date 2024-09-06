@@ -52,6 +52,7 @@ class _AddModalState extends State<AddModal> {
   void _showAddDialog(BuildContext context) {
     final token = context.read<AuthProvider>().token;
     final selectedCate = context.read<CategoryProvider>().selectedCategory;
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
     TextEditingController companyController = TextEditingController();
     TextEditingController amountController = TextEditingController();
     TextEditingController dateController = TextEditingController();
@@ -61,81 +62,110 @@ class _AddModalState extends State<AddModal> {
       builder: (BuildContext context) => Dialog(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('상세내용'),
-              const SizedBox(height: 15),
-              TextField(
-                controller: companyController,
-                decoration: const InputDecoration(
-                  labelText: '소비처',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 15),
-              TextField(
-                controller: amountController,
-                decoration: const InputDecoration(
-                  labelText: '금액',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 15),
-              TextField(
-                controller: dateController,
-                decoration: const InputDecoration(
-                  filled: true,
-                  prefixIcon: Icon(Icons.calendar_today),
-                  labelText: '날짜',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide.none,
+          child: Form(
+            // Form 위젯으로 감싸기
+            key: formKey, // formKey 연결
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('상세내용'),
+                const SizedBox(height: 15),
+                TextFormField(
+                  controller: companyController,
+                  decoration: const InputDecoration(
+                    labelText: '소비처',
+                    border: OutlineInputBorder(),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue)),
+                  validator: (value) {
+                    // 유효성 검사
+                    if (value == null || value.isEmpty) {
+                      return '소비처를 입력해주세요';
+                    }
+                    return null;
+                  },
                 ),
-                onTap: () async {
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null) {
-                    setState(() {
+                const SizedBox(height: 15),
+                TextFormField(
+                  controller: amountController,
+                  decoration: const InputDecoration(
+                    labelText: '금액',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    // 유효성 검사
+                    if (value == null || value.isEmpty) {
+                      return '금액을 입력해주세요';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return '유효한 숫자를 입력해주세요';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 15),
+                TextFormField(
+                  controller: dateController,
+                  decoration: const InputDecoration(
+                    filled: true,
+                    prefixIcon: Icon(Icons.calendar_today),
+                    labelText: '날짜',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue),
+                    ),
+                  ),
+                  onTap: () async {
+                    DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                    );
+                    if (picked != null) {
                       dateController.text = picked.toString().split(" ")[0];
-                    });
-                  }
-                },
-                readOnly: true,
-              ),
-              const SizedBox(height: 15),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('취소'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      saveConsumeHist(
-                          companyController.text,
-                          amountController.text,
-                          dateController.text,
-                          selectedCate,
-                          token);
-                      Navigator.pop(context);
-                    },
-                    child: const Text('저장'),
-                  ),
-                  const SizedBox(width: 8),
-                ],
-              ),
-            ],
+                    }
+                  },
+                  readOnly: true,
+                  validator: (value) {
+                    // 유효성 검사
+                    if (value == null || value.isEmpty) {
+                      return '날짜를 선택해주세요';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 15),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('취소'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        if (formKey.currentState?.validate() ?? false) {
+                          saveConsumeHist(
+                              companyController.text,
+                              amountController.text,
+                              dateController.text,
+                              selectedCate,
+                              token);
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: const Text('저장'),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -154,7 +184,7 @@ class CategoryModal extends StatefulWidget {
 }
 
 class _CategoryModalState extends State<CategoryModal> {
-  String _selectedCategory = '음식';
+  String? _selectedCategory;
   final TextEditingController _categoryController = TextEditingController();
   late final CategoryProvider categoryProvider;
   late Future<List<String>> dbCategories;
@@ -171,7 +201,7 @@ class _CategoryModalState extends State<CategoryModal> {
     final token = context.read<AuthProvider>().token;
     dbCategories = CategoryApi.readCategories(token).then((categories) {
       updateCategories(categories);
-      print(categoryProvider.category);
+
       return categories;
     });
   }
@@ -183,16 +213,15 @@ class _CategoryModalState extends State<CategoryModal> {
   }
 
   Future<void> addCategory(String text) async {
-    await CategoryAddApi.addItem(text, context.read<AuthProvider>().token);
+    await CategoryApi.addItem(text, context.read<AuthProvider>().token);
 
     setState(() {
       categoryProvider.addCategory(text);
     });
   }
 
-  Future<void> removeCategory(String text) async {
-    await CategoryRemoveApi.removeItem(
-        text, context.read<AuthProvider>().token);
+  Future<void> removeCategory(String? text) async {
+    await CategoryApi.removeItem(text, context.read<AuthProvider>().token);
 
     setState(() {
       categoryProvider.removeCategory(text);
@@ -257,7 +286,7 @@ class _CategoryModalState extends State<CategoryModal> {
                         .toList(),
                   );
                 } else {
-                  return const Text('No categories available');
+                  return const Text('카테고리를 추가해주세요.');
                 }
               },
             ),
@@ -279,7 +308,7 @@ class _CategoryModalState extends State<CategoryModal> {
                                 controller: _categoryController,
                                 textAlign: TextAlign.center,
                                 decoration: const InputDecoration(
-                                  labelText: 'New Category',
+                                  labelText: '새 카테고리',
                                   border: OutlineInputBorder(),
                                 ),
                               ),
@@ -291,7 +320,7 @@ class _CategoryModalState extends State<CategoryModal> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text('Cancel'),
+                                    child: const Text('취소'),
                                   ),
                                   TextButton(
                                     onPressed: () async {
@@ -304,7 +333,7 @@ class _CategoryModalState extends State<CategoryModal> {
                                         Navigator.pop(context);
                                       }
                                     },
-                                    child: const Text('Add'),
+                                    child: const Text('저장'),
                                   ),
                                 ],
                               ),
@@ -325,10 +354,12 @@ class _CategoryModalState extends State<CategoryModal> {
                 ),
                 const SizedBox(width: 8),
                 TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    widget.onCategorySelected(context);
-                  },
+                  onPressed: _selectedCategory == null
+                      ? null
+                      : () {
+                          Navigator.pop(context);
+                          widget.onCategorySelected(context);
+                        },
                   child: const Text('다음'),
                 ),
               ],

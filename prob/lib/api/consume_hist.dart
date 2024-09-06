@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:prob/model/reqModel/add_consume_hist.dart';
 
 class ConsumeHistApi {
-  static String baseUrl = "http://127.0.0.1:8000/consume.history";
+  static String baseUrl = "https://dobu.kro.kr/consume.history";
 
   static Future<dynamic> addHist(
       AddConsumeHist addConsumeHist, String? token) async {
@@ -31,9 +31,9 @@ class ConsumeHistApi {
   }
 
   //조회
-  static Future<List<HistModel>> getHist(String? token) async {
-    const extraUrl = '/';
-    final url = Uri.parse('$baseUrl$extraUrl');
+  static Future<List<HistModel>> getHist(
+      String? token, String startDate, String endDate) async {
+    final url = Uri.parse('$baseUrl?startDate=$startDate&endDate=$endDate');
     final response = await http.get(
       url,
       headers: {
@@ -42,14 +42,36 @@ class ConsumeHistApi {
       },
     );
     if (response.statusCode == 200) {
-      List<dynamic> consumeHistList = json.decode(response.body);
-      print(consumeHistList);
+      List<dynamic> consumeHistList =
+          json.decode(utf8.decode(response.bodyBytes));
+
       List<HistModel> histModels =
           consumeHistList.map((hist) => HistModel.fromJson(hist)).toList();
-      print(histModels);
+
       return histModels;
+    } else if (response.statusCode == 400) {
+      return [];
     } else {
-      throw Exception('get user failed. Token may have expired');
+      throw Exception('요청 실패. 관리자에게 문의하세요.');
+    }
+  }
+
+  //delete
+  static Future<dynamic> removeHistOne(int histId, String? token) async {
+    final url = Uri.parse('$baseUrl/$histId');
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      //print(response.body);
+      return response.body;
+    } else {
+      throw Exception("can't remove history. please retry");
     }
   }
 }

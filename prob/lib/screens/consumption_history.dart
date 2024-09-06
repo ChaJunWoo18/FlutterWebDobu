@@ -3,6 +3,7 @@ import 'package:prob/widgets/history_card.dart';
 import 'package:prob/widgets/history_details.dart';
 import 'package:prob/widgets/home_header.dart';
 import 'package:prob/widgets/add_modal.dart';
+import 'package:prob/widgets/calculator_widget.dart';
 
 class ConsumptionHistory extends StatelessWidget {
   const ConsumptionHistory({super.key});
@@ -32,11 +33,7 @@ class ConsumptionHistory extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         AddModal(),
-
-                        // HistoryControlBtn(
-                        //   label: "????",
-                        //   method: () {},
-                        // ),
+                        CalculatorWidget(),
                       ],
                     ),
                   ),

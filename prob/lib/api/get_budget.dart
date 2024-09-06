@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:prob/model/budget_model.dart';
 
 class GetBudget {
-  static String baseUrl = "http://127.0.0.1:8000/budgets";
+  static String baseUrl = "https://dobu.kro.kr/budgets";
 
   static Future<BudgetModel> readBudget(String? token) async {
     const extraUrl = '/get/budget';

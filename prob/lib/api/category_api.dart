@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class CategoryApi {
-  static String baseUrl = "http://127.0.0.1:8000/category";
+  static String baseUrl = "https://dobu.kro.kr/category";
 
   static Future<List<String>> readCategories(String? token) async {
     const extraUrl = '/categories';
@@ -23,10 +23,6 @@ class CategoryApi {
       throw Exception('get user failed. Token may have expired');
     }
   }
-}
-
-class CategoryAddApi {
-  static String baseUrl = "http://127.0.0.1:8000/category";
 
   static Future<dynamic> addItem(String addItemName, String? token) async {
     const extraUrl = '/add';
@@ -45,13 +41,9 @@ class CategoryAddApi {
       throw Exception('get user failed. Token may have expired');
     }
   }
-}
-
-class CategoryRemoveApi {
-  static String baseUrl = "http://127.0.0.1:8000/category";
 
   static Future<dynamic> removeItem(
-      String removeItemName, String? token) async {
+      String? removeItemName, String? token) async {
     const extraUrl = '/del/one';
     final url = Uri.parse('$baseUrl$extraUrl/$removeItemName');
     final response = await http.delete(url, headers: {
