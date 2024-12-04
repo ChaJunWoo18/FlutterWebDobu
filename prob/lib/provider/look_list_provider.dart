@@ -8,6 +8,6 @@ class LookListProvider extends ChangeNotifier {
   // 리스트와 차트를 전환하는 메서드
   void setView(bool showListView) {
     _showListView = showListView;
-    notifyListeners(); // UI 갱신을 위해 notifyListeners() 호출
+    notifyListeners();
   }
 }

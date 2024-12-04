@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ProfileApi {
-  static String baseUrl = "https://dobu.kro.kr";
+  static String baseUrl = "http://localhost:8000";
 
   static Future<dynamic> changePassword(
       String password, String newPassword, String? token) async {

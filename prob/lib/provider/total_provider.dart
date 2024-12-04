@@ -1,20 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:prob/model/total_model.dart';
 
 class TotalProvider with ChangeNotifier {
-  TotalModel? _total;
-  int? _preiodTotal = -1;
+  int? _monthTotal;
+  int? _weekTotal;
+  int? _dayTotal;
 
-  TotalModel? get total => _total;
-  int? get preiodTotal => _preiodTotal;
+  int? get monthTotal => _monthTotal;
+  int? get weekTotal => _weekTotal;
+  int? get dayTotal => _dayTotal;
 
-  void setTotal(TotalModel total) {
-    _total = total;
+  void setMonthTotal(int monthTotal) {
+    _monthTotal = monthTotal;
     notifyListeners();
   }
 
-  void setPreiodTotal(int preiodTotal) {
-    _preiodTotal = preiodTotal;
+  void setWeekTotal(int weekTotal) {
+    _weekTotal = weekTotal;
+    notifyListeners();
+  }
+
+  void setDayTotal(int dayTotal) {
+    _dayTotal = dayTotal;
+    notifyListeners();
+  }
+
+  void justRefresh() {
     notifyListeners();
   }
 }

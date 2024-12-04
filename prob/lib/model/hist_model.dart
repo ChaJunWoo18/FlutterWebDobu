@@ -1,33 +1,47 @@
 class HistModel {
   final int id;
-  final String categoryName;
-  final int amount;
   final String receiver;
   final String date;
+  final int amount;
+  final int installment;
+  final String? card;
+  final int subId;
+  final int icon;
+  final String categoryName;
+  final String color;
+  final int chart;
+  final int visible;
 
   HistModel({
     required this.id,
-    required this.categoryName,
-    required this.amount,
     required this.receiver,
     required this.date,
+    required this.amount,
+    required this.installment,
+    this.card,
+    required this.subId,
+    required this.icon,
+    required this.categoryName,
+    required this.color,
+    required this.chart,
+    required this.visible,
   });
 
-  // 사용자 정보를 JSON으로 변환하는 메서드
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'category_name': categoryName,
-        'amount': amount,
-        'receiver': receiver,
-        'date': date,
-      };
-
-  // JSON을 사용자 객체로 변환하는 메서드
-  factory HistModel.fromJson(Map<String, dynamic> json) => HistModel(
-        id: json['id'],
-        categoryName: json['category_name'],
-        amount: json['amount'],
-        receiver: json['receiver'],
-        date: json['date'],
-      );
+  // JSON을 HistModel로 변환하는 생성자
+  factory HistModel.fromJson(Map<String, dynamic> json) {
+    return HistModel(
+      id: json['id'],
+      receiver: json['receiver'],
+      date: json['date'],
+      amount: json['amount'],
+      installment: json['installment'],
+      card: (json['card']),
+      subId: json['sub_id'],
+      icon: json['icon'],
+      categoryName: json['name'],
+      color: json['color'],
+      chart: json['chart'],
+      visible: json['visible'],
+    );
+  }
 }

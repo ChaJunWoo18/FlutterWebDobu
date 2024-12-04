@@ -6,6 +6,10 @@
 
 #include "generated_plugin_registrant.h"
 
+#include <mobkit_calendar/mobkit_calendar_plugin.h>
 
 void fl_register_plugins(FlPluginRegistry* registry) {
+  g_autoptr(FlPluginRegistrar) mobkit_calendar_registrar =
+      fl_plugin_registry_get_registrar_for_plugin(registry, "MobkitCalendarPlugin");
+  mobkit_calendar_plugin_register_with_registrar(mobkit_calendar_registrar);
 }
