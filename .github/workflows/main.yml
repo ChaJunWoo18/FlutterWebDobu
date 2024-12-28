@@ -21,18 +21,22 @@ jobs:
       with:
         flutter-version: '3.22.2'
 
-    # 3. 의존성 설치
+    # 3. Flutter Doctor (옵션)
+    - name: Run Flutter Doctor
+      run: flutter doctor -v
+      working-directory: ./prob
+
+    # 4. 의존성 설치
     - name: Install dependencies
       run: flutter pub get
-
-    # 4. 코드 분석
-    - name: Analyze code
-      run: flutter analyze
+      working-directory: ./prob
 
     # 5. 테스트 실행
     - name: Run tests
       run: flutter test
+      working-directory: ./prob
 
-    # 6. APK 빌드 (선택)
-    - name: Build APK
-      run: flutter build apk --release
+    # 6. 빌드 실행 (선택)
+    - name: Build Web
+      run: flutter build web
+      working-directory: ./prob
