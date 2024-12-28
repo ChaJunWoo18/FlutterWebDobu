@@ -3,6 +3,7 @@ FROM ubuntu:24.04 as build-env
 RUN dpkg --print-architecture
 RUN dpkg --print-foreign-architectures
 RUN dpkg --add-architecture i386
+RUN dpkg --print-foreign-architectures
 RUN apt-get update
 
 RUN apt-get install -y libc6:i386
