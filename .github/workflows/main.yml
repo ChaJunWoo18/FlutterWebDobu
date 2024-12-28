@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         
       - name: Build Docker image
-        run: docker build -t junwoocha-flutter:latest .
+        run: docker build -t junwoocha-flutter:latest ./prob
 
       - name: Push Docker image
         run: docker push junwoocha-flutter:latest
