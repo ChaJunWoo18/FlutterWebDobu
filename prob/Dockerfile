@@ -1,5 +1,7 @@
 # Flutter 빌드를 위한 환경 설정
-FROM flutter:latest as build-env
+# FROM flutter:latest as build-env
+# 최종 배포 환경
+FROM ubuntu:24.04
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -13,9 +15,6 @@ COPY . .
 
 # Flutter 웹 애플리케이션 빌드
 RUN flutter build web
-
-# 최종 배포 환경
-FROM ubuntu:latest
 
 # 빌드된 Flutter 애플리케이션을 Nginx 디렉토리로 복사
 COPY --from=build-env /app/build/web /var/www/html
