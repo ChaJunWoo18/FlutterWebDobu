@@ -1,10 +1,10 @@
 FROM ubuntu:24.04 as build-env
 
+RUN dpkg --print-architecture
+RUN dpkg --print-foreign-architectures
 RUN dpkg --add-architecture i386
-RUN apt-get clean
-RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get update
-RUN apt-cache search libncurses5
+
 RUN apt-get install -y libc6:i386
 RUN apt-get install -y libncurses5:i386
 RUN apt-get install -y libstdc++6:i386
