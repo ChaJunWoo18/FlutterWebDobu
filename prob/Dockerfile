@@ -26,27 +26,23 @@ RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add
 #RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 #RUN apt install -y ./google-chrome-stable_current_amd64.deb
 
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV PATH="$JAVA_HOME/bin:$PATH"
+RUN java -version
+
 # android studio 설치
 RUN apt-add-repository ppa:maarten-fonville/android-studio
 RUN apt-get install -y android-studio
 
 # Flutter SDK를 GitHub에서 클론
-RUN apt-get install -y curl git unzip xz-utils zip libglu1-mesa
+RUN git clone https://github.com/flutter/flutter.git /opt/flutter
 ENV PATH="/opt/flutter/bin:${PATH}"
-
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV PATH="$JAVA_HOME/bin:$PATH"
-RUN java -version
-
-# 애플리케이션 작업 디렉토리 설정
-WORKDIR /app
-
-# pubspec.yaml 파일 복사 및 Flutter 의존성 설치
+RUN flutter doctor
 COPY pubspec.yaml .
 RUN flutter pub get
 
-# Flutter 의존성 설치
-RUN flutter doctor
+# 애플리케이션 작업 디렉토리 설정
+WORKDIR /app
 
 # 나머지 애플리케이션 코드 복사
 COPY . .
