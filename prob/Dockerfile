@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     zip \
     git \
+    wget \
     bash \
     xz-utils \
     libglu1-mesa \
