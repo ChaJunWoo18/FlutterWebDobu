@@ -15,7 +15,9 @@ WORKDIR /opt
 # Flutter SDK를 GitHub에서 클론
 RUN git clone https://github.com/flutter/flutter.git -b stable
 # android studio 설치
-RUN apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+# RUN apt install -y libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+RUN apt-add-repository ppa:maarten-fonville/android-studio
+RUN apt-get install -y android-studio   
 # chrome 설치
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN apt install -y ./google-chrome-stable_current_amd64.deb
