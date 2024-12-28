@@ -11,7 +11,6 @@ import 'package:prob/screens/main_page.dart';
 import 'package:prob/screens/profile.dart';
 import 'package:prob/screens/saving.dart';
 import 'package:prob/widgets/common/header.dart';
-import 'package:prob/widgets/main_page_old/chart.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -57,7 +56,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ? const MainPage()
           : homeProvider.homeWidget == 'calendarPage'
               ? const CalendarPage()
-              : const Chart(),
+              : const CalendarPage(),
       const Saving(),
       _buildProfilePage(homeProvider.profile),
     ];
