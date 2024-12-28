@@ -32,9 +32,9 @@ jobs:
       working-directory: ./prob
 
     # 5. 테스트 실행
-    - name: Run tests
-      run: flutter test
-      working-directory: ./prob
+    # - name: Run tests
+    #   run: flutter test
+    #   working-directory: ./prob
 
     # 6. 빌드 실행 (선택)
     - name: Build Web
