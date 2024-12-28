@@ -5,7 +5,7 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       //color: const Color(0xffFEBBCC),
       child: Column(
         children: [

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/widgets/common/custom_alert.dart';
-import 'package:prob/service/auth_service.dart';
 import 'package:prob/widgets/common/app_colors.dart';
 import 'package:prob/widgets/common/line_widget.dart';
 import 'package:prob/widgets/sign_up_page/reset.dart';

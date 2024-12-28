@@ -15,7 +15,6 @@ class SignUpEndWidget extends StatefulWidget {
   State<SignUpEndWidget> createState() => _SignUpEndWidgetState();
 }
 
-bool _isLoading = true;
 late Future<List<AllCateModel>> allCategories;
 
 class _SignUpEndWidgetState extends State<SignUpEndWidget> {
@@ -36,6 +35,7 @@ class _SignUpEndWidgetState extends State<SignUpEndWidget> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLoading = true;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -51,7 +51,7 @@ class _SignUpEndWidgetState extends State<SignUpEndWidget> {
         const SizedBox(height: 30),
         _buildCategorySelection(),
         const SizedBox(height: 20),
-        _buildSignUpButton(),
+        _buildSignUpButton(isLoading),
       ],
     );
   }
@@ -125,7 +125,7 @@ class _SignUpEndWidgetState extends State<SignUpEndWidget> {
     );
   }
 
-  Widget _buildSignUpButton() {
+  Widget _buildSignUpButton(isLoading) {
     final categoriesProvider = context.watch<CategoriesProvider>();
     final signupProvider = context.read<SignupProvider>();
     return SizedBox(
@@ -144,7 +144,7 @@ class _SignUpEndWidgetState extends State<SignUpEndWidget> {
         onPressed: categoriesProvider.isOver4
             ? () async {
                 setState(() {
-                  _isLoading = true;
+                  isLoading = true;
                 });
                 signupProvider
                     .setCategories(categoriesProvider.selectedCategories);
@@ -158,20 +158,22 @@ class _SignUpEndWidgetState extends State<SignUpEndWidget> {
                   );
 
                   setState(() {
-                    _isLoading = false;
+                    isLoading = false;
                   });
 
                   if (!context.mounted) return;
 
-                  if (!signupRes) {
+                  if (!signupRes && mounted) {
                     MyAlert.failShow(context, "오류. 다시 시도해주세요", null);
                   } else {
-                    Reset.resetproviders(context);
-                    Navigator.pushReplacementNamed(context, "/welcome");
+                    if (mounted) {
+                      Reset.resetproviders(context);
+                      Navigator.pushReplacementNamed(context, "/welcome");
+                    }
                   }
                 } else {
                   setState(() {
-                    _isLoading = false;
+                    isLoading = false;
                   });
                   MyAlert.failShow(context, "오류가 발생했습니다", '/');
                 }

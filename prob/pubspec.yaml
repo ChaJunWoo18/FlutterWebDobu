@@ -58,6 +58,9 @@ dependencies:
   calendar_date_picker2: ^1.1.7
   flutter_localization: ^0.2.3
   speech_balloon: ^0.0.4
+  
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
