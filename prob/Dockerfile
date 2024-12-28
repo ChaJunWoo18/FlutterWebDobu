@@ -8,28 +8,33 @@ RUN apt-get update && apt-get install -y \
     bash \
     xz-utils \
     libglu1-mesa \
+    software-properties-common \
+    openjdk-8-jdk \
     && apt-get clean
+    && rm -rf /var/lib/apt/lists/*
 
 # 작업 디렉토리 설정
 WORKDIR /opt
 
+# chrome 설치
+# RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+# RUN apt install -y ./google-chrome-stable_current_amd64.deb
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    dpkg -i google-chrome-stable_current_amd64.deb && \
+    apt-get install -f && \
+    rm google-chrome-stable_current_amd64.deb
+
+# android studio 설치
+RUN apt-add-repository ppa:maarten-fonville/android-studio
+RUN apt-get install -y android-studio
+
 # Flutter SDK를 GitHub에서 클론
 RUN apt-get install -y curl git unzip xz-utils zip libglu1-mesa
-# java 설치
-RUN apt-get install -y openjdk-8-jdk
+ENV PATH="/opt/flutter/bin:${PATH}"
+
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 RUN java -version
-# android studio 설치
-# RUN apt install -y libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
-RUN apt-add-repository ppa:maarten-fonville/android-studio
-RUN apt-get install -y android-studio   
-# chrome 설치
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN apt install -y ./google-chrome-stable_current_amd64.deb
-
-# Flutter 환경 변수 설정
-ENV PATH="/opt/flutter/bin:${PATH}"
 
 # 애플리케이션 작업 디렉토리 설정
 WORKDIR /app
