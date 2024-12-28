@@ -1,5 +1,11 @@
 FROM ubuntu:24.04 as build-env
 
+RUN apt update
+RUN apt upgrade -y
+RUN apt install -y wget
+
+
+
 # 필수 패키지 설치
 RUN apt-get update && apt-get install -y \
     curl \
@@ -9,11 +15,12 @@ RUN apt-get update && apt-get install -y \
     snapd
 
 # Snapd 활성화 및 Flutter 설치
-RUN systemctl enable --now snapd.socket
 RUN snap install flutter --classic
-
-# PATH에 Flutter 추가
-ENV PATH="/snap/flutter/current/bin:${PATH}"
+# android studio 설치
+RUN apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+# chrome 설치
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt install -y ./google-chrome-stable_current_amd64.deb
 
 # Flutter 의존성 설치
 RUN flutter doctor
