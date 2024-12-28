@@ -11,22 +11,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-     # 1단계: Flutter 설치 및 의존성 설치
-      - name: Checkout code
-        uses: actions/checkout@v3
+     # # 1단계: Flutter 설치 및 의존성 설치
+     #  - name: Checkout code
+     #    uses: actions/checkout@v3
 
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.22.2'
+     #  - name: Install Flutter
+     #    uses: subosito/flutter-action@v2
+     #    with:
+     #      flutter-version: '3.22.2'
 
-      - name: Run Flutter Doctor
-        run: flutter doctor -v
-        working-directory: ./prob
+     #  - name: Run Flutter Doctor
+     #    run: flutter doctor -v
+     #    working-directory: ./prob
 
-      - name: Install dependencies
-        run: flutter pub get
-        working-directory: ./prob
+     #  - name: Install dependencies
+     #    run: flutter pub get
+     #    working-directory: ./prob
 
       # 2단계: Docker 빌드
       - name: Set up Docker Buildx
