@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y \
     libglu1-mesa \
     software-properties-common \
     openjdk-8-jdk \
+    libc6:i386 \
+    libncurses5:i386 \
+    libstdc++6:i386 \ 
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -31,6 +34,7 @@ ENV PATH="$JAVA_HOME/bin:$PATH"
 RUN java -version
 
 # android studio 설치
+# RUN apt-get install -y libc6:i386 libncurses5:i386 libstdc++6:i386 
 RUN apt-add-repository ppa:maarten-fonville/android-studio
 RUN apt-get install -y android-studio
 
