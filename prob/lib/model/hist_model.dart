@@ -4,19 +4,21 @@ class HistModel {
   final String date;
   final int amount;
   final int installment;
+  final int fixedId;
   final String? card;
   final int subId;
-  final int icon;
+  final String icon;
   final String categoryName;
   final String color;
-  final int chart;
-  final int visible;
+  final bool chart;
+  final bool visible;
 
   HistModel({
     required this.id,
     required this.receiver,
     required this.date,
     required this.amount,
+    required this.fixedId,
     required this.installment,
     this.card,
     required this.subId,
@@ -34,8 +36,9 @@ class HistModel {
       receiver: json['receiver'],
       date: json['date'],
       amount: json['amount'],
+      fixedId: json['fixed_id'] ?? -1,
       installment: json['installment'],
-      card: (json['card']),
+      card: json['card'],
       subId: json['sub_id'],
       icon: json['icon'],
       categoryName: json['name'],

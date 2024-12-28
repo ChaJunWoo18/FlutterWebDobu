@@ -3,6 +3,7 @@ class AddConsumeHist {
   final String date;
   final String amount;
   final String categoryName;
+  final bool repeat;
   final String installment;
   final String card;
 
@@ -12,15 +13,7 @@ class AddConsumeHist {
     required this.amount,
     required this.categoryName,
     required this.installment,
+    required this.repeat,
     required this.card,
   });
-
-  Map<String, dynamic> toJson() => {
-        'content': content,
-        'date': date,
-        'amount': amount,
-        'category_name': categoryName,
-        'is_installment': installment,
-        'card': card,
-      };
 }

@@ -1,5 +1,6 @@
 class CategoriesModel {
-  final int subId; //CategoryIcon id
+  final int id;
+  final int subId;
   final String name;
   final String icon;
   final String color;
@@ -7,7 +8,8 @@ class CategoriesModel {
   final bool chart;
 
   CategoriesModel(
-      {required this.subId,
+      {required this.id,
+      required this.subId,
       required this.name,
       required this.icon,
       required this.color,
@@ -16,6 +18,7 @@ class CategoriesModel {
 
   // 사용자 정보를 JSON으로 변환하는 메서드
   Map<String, dynamic> toJson() => {
+        'id': id,
         'sub_id': subId,
         'name': name,
         'icon': icon,
@@ -27,6 +30,7 @@ class CategoriesModel {
   // JSON을 사용자 객체로 변환하는 메서드
   factory CategoriesModel.fromJson(Map<String, dynamic> json) =>
       CategoriesModel(
+          id: json['id'],
           subId: json['sub_id'] as int,
           name: json['name'] as String,
           icon: json['icon'],

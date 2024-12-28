@@ -47,4 +47,40 @@ class AuthApi {
       throw Exception('refresh 만료');
     }
   }
+
+  // 로그아웃 요청
+  static Future<void> logout(String? accessToken) async {
+    const extraUrl = "/logout";
+    final url = Uri.parse(baseUrl + extraUrl);
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('로그아웃 실패');
+    }
+  }
+
+  static Future<void> deleteUser(String? accessToken) async {
+    const extraUrl = "/delete_account";
+    final url = Uri.parse(baseUrl + extraUrl);
+
+    final response = await http.delete(
+      url,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+    } else {
+      throw Exception('회원 탈퇴 실패');
+    }
+  }
 }

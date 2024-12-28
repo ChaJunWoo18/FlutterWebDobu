@@ -115,13 +115,15 @@ class _SignUpNicknameState extends State<SignUpNickname> {
 
                 // 닉네임 사용 가능 여부 검증
                 final bool isAvailable = await UserApi.checkNickname(nickname);
-                if (!isAvailable) {
+                if (!isAvailable && context.mounted) {
                   MyAlert.failShow(context, '사용 중인 닉네임이에요', null);
                   return;
                 }
 
                 signupProvider.setNickname(nickname);
-                Navigator.pushReplacementNamed(context, "/join_end");
+                if (context.mounted) {
+                  Navigator.pushReplacementNamed(context, "/join_end");
+                }
               }
             : null,
         child: const Text(

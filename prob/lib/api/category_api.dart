@@ -27,6 +27,31 @@ class CategoryApi {
     }
   }
 
+  //유저 카테고리 동기화
+  static Future<List<CategoriesModel>> syncCategory(
+      List<int> list, String? token) async {
+    const extraUrl = '/categories/edit/user_sync';
+    final url = Uri.parse(baseUrl + extraUrl);
+    final response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        "update_list": list,
+      }),
+    );
+    if (response.statusCode == 200) {
+      List<dynamic> jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+      return jsonResponse
+          .map((data) => CategoriesModel.fromJson(data))
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
   //모든 카테고리 조회(login 안해도 조회 가능)
   static Future<List<AllCateModel>> readAllCategories() async {
     const extraUrl = '/all_categories';
@@ -46,26 +71,26 @@ class CategoryApi {
     }
   }
 
-  //유저 카테고리 수정(수정필요)
-  static Future<List<CategoriesModel>> updateCategories() async {
-    const extraUrl = '/update/categories';
-    final url = Uri.parse(baseUrl + extraUrl);
-    final response = await http.put(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    );
+  // //유저 카테고리 수정(수정필요)
+  // static Future<List<CategoriesModel>> updateCategories() async {
+  //   const extraUrl = '/update/categories';
+  //   final url = Uri.parse(baseUrl + extraUrl);
+  //   final response = await http.put(
+  //     url,
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   );
 
-    if (response.statusCode == 200) {
-      List<dynamic> jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
-      return jsonResponse
-          .map((data) => CategoriesModel.fromJson(data))
-          .toList();
-    } else {
-      throw Exception('수정 실패');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     List<dynamic> jsonResponse = jsonDecode(utf8.decode(response.bodyBytes));
+  //     return jsonResponse
+  //         .map((data) => CategoriesModel.fromJson(data))
+  //         .toList();
+  //   } else {
+  //     throw Exception('수정 실패');
+  //   }
+  // }
 
   //바 차트 선택 카테고리 업데이트
   static Future<bool> updateUserCategories(

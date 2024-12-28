@@ -144,12 +144,11 @@ class _SignUpEndWidgetState extends State<SignUpEndWidget> {
         onPressed: categoriesProvider.isOver4
             ? () async {
                 setState(() {
-                  _isLoading = true; // 로딩 시작
+                  _isLoading = true;
                 });
                 signupProvider
                     .setCategories(categoriesProvider.selectedCategories);
 
-                // 최종 검증 및 회원가입 요청
                 if (signupProvider.isNotEmpty()) {
                   final signupRes = await UserApi.signUp(
                     signupProvider.email!,
@@ -159,7 +158,7 @@ class _SignUpEndWidgetState extends State<SignUpEndWidget> {
                   );
 
                   setState(() {
-                    _isLoading = false; // 로딩 종료
+                    _isLoading = false;
                   });
 
                   if (!context.mounted) return;
@@ -172,7 +171,7 @@ class _SignUpEndWidgetState extends State<SignUpEndWidget> {
                   }
                 } else {
                   setState(() {
-                    _isLoading = false; // 로딩 종료
+                    _isLoading = false;
                   });
                   MyAlert.failShow(context, "오류가 발생했습니다", '/');
                 }

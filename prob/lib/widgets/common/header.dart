@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:prob/api/auth_api.dart';
 import 'package:prob/provider/auth_provider.dart';
-import 'package:prob/provider/home_provider.dart';
-import 'package:prob/provider/main_page/calendar_provider.dart';
-import 'package:prob/provider/user_provider.dart';
+import 'package:prob/service/provider_clear.dart';
 import 'package:provider/provider.dart';
 
 class Header extends StatelessWidget {
@@ -12,17 +11,12 @@ class Header extends StatelessWidget {
   static const logoutImage = 'assets/images/logout.png';
   @override
   Widget build(BuildContext context) {
-    final userProvider = context.read<UserProvider>();
     final authProvider = context.read<AuthProvider>();
-    final homeProvider = context.read<HomeProvider>();
-    final calendarProvider = context.read<CalendarProvider>();
-    void logout() {
-      userProvider.clearUser();
-      authProvider.clearTokens();
-      calendarProvider.clear();
 
-      homeProvider.setHomeWidget('mainPage');
-      Navigator.pushReplacementNamed(context, '/');
+    void logout() async {
+      AuthApi.logout(authProvider.accessToken);
+
+      AuthHelper.clearProvider(context);
     }
 
     return Padding(

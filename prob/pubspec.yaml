@@ -55,6 +55,9 @@ dependencies:
   uuid: ^4.5.1
   awesome_number_picker: ^0.0.4
   flutter_svg: ^2.0.0
+  calendar_date_picker2: ^1.1.7
+  flutter_localization: ^0.2.3
+  speech_balloon: ^0.0.4
 
 dev_dependencies:
   flutter_test:

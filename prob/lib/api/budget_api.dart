@@ -20,13 +20,13 @@ class BudgetApi {
     if (response.statusCode == 200) {
       return BudgetModel.fromJson(json.decode(response.body));
     } else {
-      print('${response.statusCode}');
+      // print('${response.statusCode}');
       throw Exception('예산 가져오기 실패');
     }
   }
 
   static Future<BudgetModel> updateBudget(String? token, int newBudget) async {
-    const extraUrl = '/update/budget/byId';
+    const extraUrl = '/update/budget';
     final url = Uri.parse(baseUrl + extraUrl);
     final response = await http.put(
       url,
@@ -39,6 +39,8 @@ class BudgetApi {
 
     if (response.statusCode == 200) {
       return BudgetModel.fromJson(json.decode(response.body));
+    } else if (response.statusCode == 406) {
+      throw Exception('값이 너무 커요');
     } else {
       throw Exception('예산 업데이트 실패');
     }

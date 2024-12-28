@@ -20,6 +20,7 @@ class ConsumeHistApi {
           "receiver": addConsumeHist.content,
           "date": addConsumeHist.date,
           "amount": addConsumeHist.amount,
+          "repeat": addConsumeHist.repeat,
           "installment": addConsumeHist.installment,
           "card": addConsumeHist.card,
         }));
@@ -49,6 +50,7 @@ class ConsumeHistApi {
         },
         body: jsonEncode({
           "receiver": addConsumeHist.content,
+          "repeat": addConsumeHist.repeat,
           "date": addConsumeHist.date,
           "amount": addConsumeHist.amount,
           "installment": addConsumeHist.installment,
@@ -92,7 +94,7 @@ class ConsumeHistApi {
               ? dataList.map((hist) => HistModel.fromJson(hist)).toList()
               : [];
 
-          histModelsMap[yearMonth] = histModels; // key는 YYYY-MM 형식
+          histModelsMap[yearMonth] = histModels;
         });
       }
       // print(histModelsMap);

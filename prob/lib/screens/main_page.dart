@@ -9,7 +9,6 @@ import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/provider/loading_provider.dart';
 import 'package:prob/provider/total_provider.dart';
 import 'package:prob/provider/user_provider.dart';
-import 'package:prob/service/this_week_cal.dart';
 import 'package:prob/widgets/main_page/calendar_button.dart';
 import 'package:prob/widgets/main_page/main_card.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +28,6 @@ class _MainPageState extends State<MainPage> {
   late final CategoryProvider categoryProvider;
   UserModel? user;
 
-// 페이지가 다시 활성화될 때마다 데이터 로드
   @override
   void initState() {
     super.initState();
@@ -72,23 +70,20 @@ class _MainPageState extends State<MainPage> {
         final budgetData = await BudgetApi.readBudget(authProvider.accessToken);
         budgetProvider.setBudget(budgetData);
       }
-      if (totalProvider.monthTotal == null || totalProvider.weekTotal == null) {
-        final monthTotal = await TotalConsumeApi.readPreiodTotalMWD(
-            'month', authProvider.accessToken);
-        final weekTotal = await TotalConsumeApi.readPreiodTotalMWD(
-            'week', authProvider.accessToken);
-        totalProvider.setMonthTotal(monthTotal);
-        totalProvider.setWeekTotal(weekTotal);
-        final budget = budgetProvider.budgetData!.budgetAmount;
-        //이번주 계산
-        DateTime now =
-            DateTime.now().toUtc().add(const Duration(hours: 9)); // UTC에 9시간 추가
-        int remainingDays = ThisWeekCal.countRemainingDaysInCurrentWeek(now);
 
-        budgetProvider.setRemainBudget(RemainBudget(
-            week: (budget ~/ remainingDays - weekTotal),
-            month: (budget - monthTotal)));
-      }
+      final monthTotal = await TotalConsumeApi.readPreiodTotalMWD(
+          'month', authProvider.accessToken);
+      final weekTotal = await TotalConsumeApi.readPreiodTotalMWD(
+          'week', authProvider.accessToken);
+      totalProvider.setMonthTotal(monthTotal);
+      totalProvider.setWeekTotal(weekTotal);
+      final budget = budgetProvider.budgetData!.curBudget;
+
+      budgetProvider.setRemainBudget(
+        curBudget: budget,
+        weekTotal: totalProvider.weekTotal ?? 0,
+        monthTotal: totalProvider.monthTotal ?? 0,
+      );
     } catch (e) {
       loadingProvider.setError("데이터 가져오기 실패!");
     } finally {

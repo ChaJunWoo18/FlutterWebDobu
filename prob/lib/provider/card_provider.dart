@@ -20,4 +20,8 @@ class CardProvider with ChangeNotifier {
     _cardList.removeWhere((card) => card.id == model.id);
     notifyListeners();
   }
+
+  void clear() {
+    _cardList = [];
+  }
 }

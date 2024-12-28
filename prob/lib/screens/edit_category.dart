@@ -4,21 +4,6 @@ import 'package:prob/model/categories_model.dart';
 import 'package:prob/provider/category_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-class LikeManager {
-  // 항목의 like 상태를 저장
-  static Future<void> saveLikeStatus(int subId, bool isLiked) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool("$subId", isLiked);
-  }
-
-  // 항목의 like 상태를 불러오기
-  static Future<bool> getLikeStatus(int subId) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool("$subId") ?? false;
-  }
-}
 
 class EditCategory extends StatefulWidget {
   const EditCategory({super.key});
@@ -157,7 +142,7 @@ class AddAndRemButton extends StatelessWidget {
       ),
       onPressed: () {
         // 요소를 찾고 수정
-        provider.toggleVisibile(category.subId);
+        provider.toggleVisibile(category.id, context);
       },
       color:
           category.visible ? const Color(0xFFE68C25) : const Color(0xFF5D89BB),

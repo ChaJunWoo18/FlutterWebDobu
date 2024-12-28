@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:prob/provider/auth_provider.dart';
+import 'package:prob/provider/fixed_provider.dart';
 import 'package:prob/provider/home_provider.dart';
 import 'package:prob/provider/user_provider.dart';
+import 'package:prob/widgets/common/custom_alert.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Profile extends StatelessWidget {
   const Profile({super.key});
-
   @override
   Widget build(BuildContext context) {
     const boxSize = 190.0;
@@ -26,15 +27,12 @@ class Profile extends StatelessWidget {
                   top: 30, left: 125, right: 125, bottom: 14),
               child: Column(
                 children: [
-                  //이미지
                   GestureDetector(
-                    onTap: () {
-                      // 버튼을 클릭했을 때의 동작을 여기에 작성
-                    },
+                    onTap: () {},
                     child: ClipOval(
                       child: Container(
-                        width: 100.0, // 원하는 너비
-                        height: 100.0, // 원하는 높이
+                        width: 100.0,
+                        height: 100.0,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
@@ -62,28 +60,90 @@ class Profile extends StatelessWidget {
           ),
         ),
         RowList(
-          method: () {
-            homeProvider.setProfile('edit_category');
+          method: () async {
+            final authProvider = context.read<AuthProvider>();
+            bool isTokenValid = await authProvider.checkAndRefreshToken();
+
+            if (isTokenValid) {
+              try {
+                homeProvider.setProfile('edit_category');
+              } catch (e) {
+                if (context.mounted) {
+                  MyAlert.failShow(context, '목록 조회 실패', null);
+                }
+              }
+            } else {
+              if (context.mounted) {
+                MyAlert.failShow(context, '다시 로그인해주세요', '/');
+              }
+            }
           },
           title: '카테고리 수정',
         ),
         RowList(
-          method: () {},
+          method: () async {
+            final authProvider = context.read<AuthProvider>();
+            bool isTokenValid = await authProvider.checkAndRefreshToken();
+
+            if (isTokenValid) {
+              try {
+                if (context.mounted) {
+                  context
+                      .read<FixedProvider>()
+                      .fetchFixedConsume(authProvider.accessToken);
+                }
+                homeProvider.setProfile('fixed_consume');
+              } catch (e) {
+                if (context.mounted) {
+                  MyAlert.failShow(context, '목록 조회 실패', null);
+                }
+              }
+            } else {
+              if (context.mounted) {
+                MyAlert.failShow(context, '다시 로그인해주세요', '/');
+              }
+            }
+          },
           title: '고정 지출',
         ),
         RowList(
-          method: () {},
+          method: () async {
+            final authProvider = context.read<AuthProvider>();
+            bool isTokenValid = await authProvider.checkAndRefreshToken();
+
+            if (isTokenValid) {
+              homeProvider.setProfile('budget_setting');
+            } else {
+              if (context.mounted) {
+                MyAlert.failShow(context, '다시 로그인해주세요', '/');
+              }
+            }
+          },
           title: '예산 설정',
         ),
         RowList(
-          method: () {},
+          method: () async {
+            final authProvider = context.read<AuthProvider>();
+            bool isTokenValid = await authProvider.checkAndRefreshToken();
+
+            if (isTokenValid) {
+              homeProvider.setProfile('income_setting');
+            } else {
+              if (context.mounted) {
+                MyAlert.failShow(context, '다시 로그인해주세요', '/');
+              }
+            }
+          },
           title: '총 수입 설정',
         ),
         const Spacer(),
         TextButton(
             style: const ButtonStyle(
                 padding: WidgetStatePropertyAll(EdgeInsets.zero)),
-            onPressed: () {},
+            onPressed: () {
+              final authProvider = context.read<AuthProvider>();
+              MyAlert.showDeleteAccountAlert(context, authProvider.accessToken);
+            },
             child: Container(
               padding: const EdgeInsets.all(18),
               width: MediaQuery.of(context).size.width,

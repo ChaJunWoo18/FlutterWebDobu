@@ -7,6 +7,7 @@ class HomeProvider extends ChangeNotifier {
 
   void setHomeWidget(String seletedWidget) {
     _homeWidget = seletedWidget;
+    _profile = 'profile';
     notifyListeners();
   }
 
@@ -16,6 +17,12 @@ class HomeProvider extends ChangeNotifier {
 
   void setProfile(String seletedWidget) {
     _profile = seletedWidget;
+    _homeWidget = 'mainPage';
     notifyListeners();
+  }
+
+  void reset() {
+    _homeWidget = 'mainPage';
+    _profile = 'profile';
   }
 }

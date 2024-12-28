@@ -61,9 +61,9 @@ class TotalConsumeApi {
   }
 
   //한 달 소비 조회(이번달 or 저번달)
-  static Future<int> readPreiodTotalMWD(String MWD, String? token) async {
+  static Future<int> readPreiodTotalMWD(String mwd, String? token) async {
     const extraUrl = '/get/total/consume/period_this_MWD';
-    final url = Uri.parse('$baseUrl$extraUrl?MWD=$MWD');
+    final url = Uri.parse('$baseUrl$extraUrl?MWD=$mwd');
 
     final response = await http.get(
       url,

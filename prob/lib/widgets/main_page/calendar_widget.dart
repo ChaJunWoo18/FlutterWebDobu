@@ -10,8 +10,8 @@ import 'package:prob/provider/card_provider.dart';
 import 'package:prob/provider/category_provider.dart';
 import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/provider/main_page/calendar_provider.dart';
-import 'package:prob/service/auth_service.dart';
 import 'package:prob/widgets/common/custom_alert.dart';
+import 'package:prob/widgets/profile/fixed_consume/date_picker.dart';
 import 'package:provider/provider.dart';
 import 'utils.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -93,7 +93,8 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                         context: context,
                         title: '소비내역 추가',
                         onRefresh: widget.onRefresh,
-                        histId: -1);
+                        histId: -1,
+                        histIsFixed: null);
                   },
                   child: const Padding(
                     padding: EdgeInsets.symmetric(vertical: 7, horizontal: 26),
@@ -163,13 +164,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 color: _black,
                 fontSize: 13,
               ),
-              isTodayHighlighted: true,
-              todayTextStyle: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: topBorderColor,
-                fontSize: 14,
-              ),
-              todayDecoration: const BoxDecoration(color: Colors.transparent),
               selectedDecoration:
                   const BoxDecoration(color: Colors.transparent),
               selectedTextStyle: const TextStyle(color: _black),
@@ -187,6 +181,85 @@ class _CalendarWidgetState extends State<CalendarWidget> {
             ),
             //날짜 셀 커스텀
             calendarBuilders: CalendarBuilders(
+              todayBuilder: (context, day, focusedDay) {
+                // todayDecoration: const BoxDecoration(color: Colors.transparent),
+                final dayKey = DateFormat('yyyy-MM-dd').format(day);
+                final monthKey = DateFormat('yyyy-MM').format(day);
+                List<HistModel> dayData =
+                    widget.consumeHist[monthKey]?.where((hist) {
+                          return hist.date == dayKey;
+                        }).toList() ??
+                        [];
+                return Stack(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Text(
+                          '${day.day}', // 날짜 표시
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: topBorderColor,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (dayData.isNotEmpty)
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              bottom: 5, left: 3, right: 3),
+                          child: Wrap(
+                            spacing: 2.0, // 원 간격
+                            runSpacing: 2.0, // 줄 간격
+
+                            children: (dayData.length <= 6)
+                                ? [
+                                    ...dayData.take(6).map((data) {
+                                      return Container(
+                                        width: 12,
+                                        height: 12,
+                                        decoration: BoxDecoration(
+                                          color: Color(
+                                              int.parse(data.color)), // 색상 변환
+                                          shape: BoxShape.circle,
+                                        ),
+                                      );
+                                    }),
+                                  ]
+                                : [
+                                    ...dayData.take(4).map((data) {
+                                      return Container(
+                                        width: 12,
+                                        height: 12,
+                                        decoration: BoxDecoration(
+                                          color: Color(
+                                              int.parse(data.color)), // 색상 변환
+                                          shape: BoxShape.circle,
+                                        ),
+                                      );
+                                    }),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 2.0),
+                                      child: Text(
+                                        '+${dayData.length - 4}',
+                                        style: const TextStyle(
+                                          fontSize: 11,
+                                          // fontWeight: FontWeight.bold,
+                                          color: Colors.black, // 텍스트 색상
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
               defaultBuilder: (context, day, focusedDay) {
                 final dayKey = DateFormat('yyyy-MM-dd').format(day);
                 final monthKey = DateFormat('yyyy-MM').format(day);
@@ -357,8 +430,9 @@ class _ListViewWidgetState extends State<ListViewWidget> {
         _addAndEditModal(
             context: context,
             title: '상세 내역',
-            onRefresh: widget.onRefresh,
-            histId: hist.id);
+            onRefresh: onRefresh,
+            histId: hist.id,
+            histIsFixed: hist.fixedId);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 10),
@@ -438,7 +512,9 @@ void _addAndEditModal(
     {required BuildContext context,
     required String title,
     required VoidCallback onRefresh,
-    required histId}) {
+    required histId,
+    required histIsFixed}) {
+  // print(histIsFixed);
   Future<void> saveData(BuildContext context, AddProvider addProvider) async {
     final calendarProvider = context.read<CalendarProvider>();
     final authProvider = context.read<AuthProvider>();
@@ -449,14 +525,12 @@ void _addAndEditModal(
       try {
         final fields = addProvider.getFieldValues();
         late String date;
-
-        if (context.mounted) {
-          date = calendarProvider.selectedDay!.toIso8601String();
-        }
+        date = calendarProvider.selectedDay!.toIso8601String();
 
         final addConsumeHist = AddConsumeHist(
           amount: fields['amount'],
           categoryName: fields['category'],
+          repeat: false,
           installment:
               fields['installment'] == 'none' ? '0' : fields['installment'],
           content: fields['content'],
@@ -468,18 +542,23 @@ void _addAndEditModal(
 
         calendarProvider.setSelectHist(saved);
         addProvider.resetFields();
-
+        //total변화
+        // context
+        //     .read<TotalProvider>()
+        //     .editTotal(isPlus: true, value: int.parse(fields['amount']));
         if (context.mounted) {
           showCustomSnackBar(context, '저장 완료');
           Navigator.of(context).pop();
           onRefresh();
         }
       } catch (e) {
+        // print(e);
         if (context.mounted) {
           MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
         }
       }
     } else {
+      // print('토큰만료');
       if (context.mounted) {
         MyAlert.failShow(context, '다시 로그인 해주세요', null);
       }
@@ -504,6 +583,7 @@ void _addAndEditModal(
 
         final addConsumeHist = AddConsumeHist(
           amount: fields['amount'],
+          repeat: false,
           categoryName: fields['category'],
           installment:
               fields['installment'] == 'none' ? '0' : fields['installment'],
@@ -517,6 +597,10 @@ void _addAndEditModal(
 
         calendarProvider.setSelectHist(edited);
         addProvider.resetFields();
+        //total변화
+        // context
+        //     .read<TotalProvider>()
+        //     .editTotal(isPlus: true, value: int.parse(fields['amount']));
 
         if (context.mounted) {
           showCustomSnackBar(context, '수정 완료');
@@ -546,6 +630,9 @@ void _addAndEditModal(
       try {
         final removed = await ConsumeHistApi.removeHist(histId, accessToken);
         calendarProvider.setSelectHist(removed);
+        //total변화
+        // context.read<TotalProvider>().justRefresh();
+        addProvider.resetFields();
         if (context.mounted) {
           showCustomSnackBar(context, '삭제 완료');
           Navigator.of(context).pop();
@@ -565,12 +652,17 @@ void _addAndEditModal(
 
   const textStyle = TextStyle(color: Color(0xFF3B2304), fontSize: 17);
   const dividerColor = Color(0xFFE1E1E1);
-  final maxWidth = MediaQuery.of(context).size.width - 46;
-  final maxHeight = MediaQuery.of(context).size.height / 5 * 3;
+  const maxWidth = 300.0;
+  const maxHeight = 600.0;
+
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       final addProvider = context.watch<AddProvider>();
+      final addCond = title == '소비내역 추가';
+      final editCond = title == '상세 내역' && histIsFixed == -1;
+      // final fixedCond = title == '상세 내역' && histIsFixed != -1;
       return AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
@@ -578,7 +670,7 @@ void _addAndEditModal(
         backgroundColor: Colors.white,
         contentPadding: EdgeInsets.zero,
         content: ConstrainedBox(
-          constraints: BoxConstraints(
+          constraints: const BoxConstraints(
             maxHeight: maxHeight,
             maxWidth: maxWidth,
           ),
@@ -591,104 +683,25 @@ void _addAndEditModal(
                 child: Text(title, style: textStyle),
               ),
               const Divider(color: dividerColor, thickness: 1, height: 0),
-              Padding(
-                padding:
-                    const EdgeInsets.only(top: 11.0, right: 29, bottom: 10),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          '할부',
-                          style: textStyle.copyWith(fontSize: 11),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    addProvider.installmentSelected == 'self'
-                        ? SizedBox(
-                            width: 66,
-                            // height: 18,
-                            child: TextField(
-                              controller: addProvider.installmentController,
-                              keyboardType: TextInputType.number,
-                              cursorColor: const Color(0xFF707070),
-                              cursorWidth: 1,
-                              decoration: const InputDecoration(
-                                isDense: true,
-
-                                contentPadding:
-                                    EdgeInsets.only(top: 4, bottom: 4, left: 6),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color.fromARGB(255, 136, 81, 10),
-                                        width: 1.5)),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.zero,
-                                  borderSide:
-                                      BorderSide(color: Color(0xFF707070)),
-                                ),
-                                // isDense: true,
-                              ),
-                              style: textStyle.copyWith(fontSize: 11),
-                              textAlignVertical: TextAlignVertical.center,
-                              onChanged: (value) {
-                                addProvider.setInstallmentSelfInputValue(value);
-                              },
-                            ),
-                          )
-                        : SizedBox(
-                            width: 66,
-                            child: DropdownButtonFormField<String>(
-                              value: addProvider.installmentSelected,
-                              decoration: const InputDecoration(
-                                isDense: true,
-                                contentPadding:
-                                    EdgeInsets.only(top: 1, bottom: 1, left: 6),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.zero,
-                                  borderSide:
-                                      BorderSide(color: Color(0xFF707070)),
-                                ),
-                              ),
-                              style: textStyle.copyWith(fontSize: 11),
-                              items: const [
-                                DropdownMenuItem(
-                                    value: 'none', child: Text('해당 없음')),
-                                DropdownMenuItem(
-                                    value: '2', child: Text('2개월')),
-                                DropdownMenuItem(
-                                    value: '3', child: Text('3개월')),
-                                DropdownMenuItem(
-                                    value: 'self', child: Text('직접입력')),
-                              ],
-                              onChanged: (String? newValue) {
-                                if (newValue != null) {
-                                  addProvider.setInstallmentSelected(newValue);
-                                }
-                              },
-                              icon: const Icon(
-                                Icons.keyboard_arrow_down_outlined,
-                                size: 13,
-                              ),
-                            ),
-                          ),
-                  ],
-                ),
-              ),
+              addCond || editCond
+                  ? InstallmentItem(
+                      textStyle: textStyle, addProvider: addProvider)
+                  : const SizedBox.shrink(),
               const ModalItem(textStyle: textStyle, subTitle: '항목'),
               const ModalItem(textStyle: textStyle, subTitle: '분류'),
               const ModalItem(textStyle: textStyle, subTitle: '카드'),
               const ModalItem(textStyle: textStyle, subTitle: '금액'),
-              const Center(
+              const SizedBox(height: 5),
+              Center(
                 child: Text(
-                  '*할부 선택 시 원 금액을 입력하시면 자동으로 계산됩니다',
-                  style: TextStyle(
+                  addCond || editCond
+                      ? '*할부 선택 시 원 금액을 입력하시면 자동으로 계산됩니다'
+                      : '*고정 지출로 추가된 기록은 수정이 불가능합니다',
+                  style: const TextStyle(
                       fontSize: 10, color: Color.fromARGB(160, 59, 35, 4)),
                 ),
               ),
+              const SizedBox(height: 5),
 
               //
               Padding(
@@ -735,9 +748,10 @@ void _addAndEditModal(
                             ),
                           ),
                     ElevatedButton(
-                      onPressed: title == '상세 내역'
+                      onPressed: editCond
                           ? () async {
-                              final valid = addProvider.validateFields();
+                              final valid =
+                                  addProvider.validateFields(isRepeat: false);
                               if (valid) {
                                 await editData(context, addProvider, histId);
                               } else {
@@ -749,28 +763,38 @@ void _addAndEditModal(
                                 }
                               }
                             }
-                          : () async {
-                              final valid = addProvider.validateFields();
-                              if (valid) {
-                                await saveData(context, addProvider);
-                              } else {
-                                if (addProvider.installmentError != null) {
-                                  if (context.mounted) {
-                                    MyAlert.failShow(context,
-                                        addProvider.installmentError!, null);
+                          : addCond
+                              ? () async {
+                                  final valid = addProvider.validateFields(
+                                      isRepeat: false);
+                                  if (valid) {
+                                    await saveData(context, addProvider);
+                                  } else {
+                                    if (addProvider.installmentError != null) {
+                                      if (context.mounted) {
+                                        MyAlert.failShow(
+                                            context,
+                                            addProvider.installmentError!,
+                                            null);
+                                      }
+                                    }
                                   }
                                 }
-                              }
-                            },
+                              : () {
+                                  Navigator.of(context).pop();
+                                  addProvider.resetFields();
+                                },
                       style: ElevatedButton.styleFrom(
                         elevation: 4,
-                        backgroundColor: const Color(0xFF5366DF),
+                        backgroundColor: editCond || addCond
+                            ? const Color(0xFF5366DF)
+                            : Colors.grey,
                         padding: const EdgeInsets.symmetric(
                             vertical: 7.0, horizontal: 40.0),
                       ),
-                      child: const Text(
-                        '저장',
-                        style: TextStyle(
+                      child: Text(
+                        editCond || addCond ? '저장' : '닫기',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 13,
                         ),
@@ -790,6 +814,101 @@ void _addAndEditModal(
   );
 }
 
+class InstallmentItem extends StatelessWidget {
+  const InstallmentItem({
+    super.key,
+    required this.textStyle,
+    required this.addProvider,
+  });
+
+  final TextStyle textStyle;
+  final AddProvider addProvider;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 11.0, right: 29, bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                '할부',
+                style: textStyle.copyWith(fontSize: 11),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          addProvider.installmentSelected == 'self'
+              ? SizedBox(
+                  width: 66,
+                  // height: 18,
+                  child: TextField(
+                    controller: addProvider.installmentController,
+                    keyboardType: TextInputType.number,
+                    cursorColor: const Color(0xFF707070),
+                    cursorWidth: 1,
+                    decoration: const InputDecoration(
+                      isDense: true,
+
+                      contentPadding:
+                          EdgeInsets.only(top: 4, bottom: 4, left: 6),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 136, 81, 10),
+                              width: 1.5)),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(color: Color(0xFF707070)),
+                      ),
+                      // isDense: true,
+                    ),
+                    style: textStyle.copyWith(fontSize: 11),
+                    textAlignVertical: TextAlignVertical.center,
+                    onChanged: (value) {
+                      addProvider.setInstallmentSelfInputValue(value);
+                    },
+                  ),
+                )
+              : SizedBox(
+                  width: 66,
+                  child: DropdownButtonFormField<String>(
+                    value: addProvider.installmentSelected,
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      contentPadding:
+                          EdgeInsets.only(top: 1, bottom: 1, left: 6),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.zero,
+                        borderSide: BorderSide(color: Color(0xFF707070)),
+                      ),
+                    ),
+                    style: textStyle.copyWith(fontSize: 11),
+                    items: const [
+                      DropdownMenuItem(value: 'none', child: Text('해당 없음')),
+                      DropdownMenuItem(value: '2', child: Text('2개월')),
+                      DropdownMenuItem(value: '3', child: Text('3개월')),
+                      DropdownMenuItem(value: 'self', child: Text('직접입력')),
+                    ],
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        addProvider.setInstallmentSelected(newValue);
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_outlined,
+                      size: 13,
+                    ),
+                  ),
+                ),
+        ],
+      ),
+    );
+  }
+}
+
 class ModalItem extends StatelessWidget {
   const ModalItem({
     super.key,
@@ -803,9 +922,11 @@ class ModalItem extends StatelessWidget {
   Widget build(BuildContext context) {
     void fetchData(token) async {
       final categories = await CategoryApi.readCategories(token);
+      final visibleCategories =
+          categories.where((category) => category.visible).toList();
       final cards = await CardApi.readCards(token);
       if (context.mounted) {
-        context.read<CategoryProvider>().setCategory(categories);
+        context.read<CategoryProvider>().setCategory(visibleCategories);
         context.read<CardProvider>().setCardList(cards);
       }
     }
@@ -836,21 +957,28 @@ class ModalItem extends StatelessWidget {
                   builder: (context, categoryProvider, addProvider,
                       cardProvider, child) {
                     if (categoryProvider.userCategory.isEmpty ||
-                        addProvider.categorySelected == '' ||
-                        addProvider.categorySelected == 'none') {
+                        addProvider.categorySelected == '') {
                       return const DisableDropDownButton();
                     } else {
                       final categories = categoryProvider.userCategory
+                          .where((category) => category.visible)
                           .map((category) => category.name)
                           .toList();
+
                       final initialValue =
-                          addProvider.categorySelected.isNotEmpty
+                          addProvider.categorySelected != 'none'
                               ? addProvider.categorySelected
                               : categories.isNotEmpty
                                   ? categories[0]
                                   : null;
+                      if (initialValue != null) {
+                        // 빌드 완료 후 상태 변경
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          addProvider.setSecondSelectedOption(initialValue);
+                        });
+                      }
                       return DropdownButtonFormField<String>(
-                        value: initialValue, //addProvider.categorySelected,
+                        value: initialValue,
                         decoration: InputDecoration(
                           focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(
@@ -920,35 +1048,42 @@ class ModalItem extends StatelessWidget {
                         }
                       },
                     )
-                  : Consumer<AddProvider>(
-                      builder: (context, addProvider, child) {
-                      return TextField(
-                        //항목, 금액 컨트롤러
-                        controller: subTitle == '항목'
-                            ? addProvider.contentController
-                            : addProvider.amountController,
-                        cursorColor: const Color(0xFF707070),
-                        cursorWidth: 1,
-                        style: const TextStyle(
-                            fontSize: 15, color: Color(0xFF3B2304)),
-                        decoration: InputDecoration(
-                          errorText: subTitle == '항목'
-                              ? addProvider.companyError
-                              : addProvider.amountError,
-                          errorStyle: const TextStyle(fontSize: 10),
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
-                          focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 136, 81, 10),
-                                  width: 1.5)),
-                          border: const OutlineInputBorder(
-                              borderRadius: BorderRadius.zero,
-                              borderSide: BorderSide(color: Color(0xFF707070))),
-                        ),
-                      );
-                    }),
+                  : subTitle == '날짜'
+                      ? Consumer<AddProvider>(
+                          builder: (context, addProvider, child) {
+                          return DatePickerWithTextField(provider: addProvider);
+                        })
+                      : Consumer<AddProvider>(
+                          builder: (context, addProvider, child) {
+                          return TextField(
+                            //항목, 금액 컨트롤러
+                            controller: subTitle == '항목'
+                                ? addProvider.contentController
+                                : addProvider.amountController,
+
+                            cursorColor: const Color(0xFF707070),
+                            cursorWidth: 1,
+                            style: const TextStyle(
+                                fontSize: 15, color: Color(0xFF3B2304)),
+                            decoration: InputDecoration(
+                              errorText: subTitle == '항목'
+                                  ? addProvider.companyError
+                                  : addProvider.amountError,
+                              errorStyle: const TextStyle(fontSize: 10),
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              focusedBorder: const OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 136, 81, 10),
+                                      width: 1.5)),
+                              border: const OutlineInputBorder(
+                                  borderRadius: BorderRadius.zero,
+                                  borderSide:
+                                      BorderSide(color: Color(0xFF707070))),
+                            ),
+                          );
+                        }),
         ),
       ]),
     );

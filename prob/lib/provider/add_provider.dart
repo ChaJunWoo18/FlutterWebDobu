@@ -7,7 +7,7 @@ class AddProvider with ChangeNotifier {
   bool _installmentIsSelfInput = false;
   String _installmentSelfInputValue = '';
 
-  String _categorySelected = '식사';
+  String _categorySelected = 'none';
 
   String _cardSelected = 'none';
 
@@ -44,7 +44,7 @@ class AddProvider with ChangeNotifier {
   void setEditInfo(
       {required receiver,
       required amount,
-      required installment,
+      installment,
       required categoryName,
       String? cardName}) {
     _installmentSelected = 'self';
@@ -56,14 +56,30 @@ class AddProvider with ChangeNotifier {
     _cardSelected = cardName ?? 'none';
   }
 
+  void setFixedInfo(
+      {required date,
+      required receiver,
+      required amount,
+      required categoryName,
+      String? cardName}) {
+    contentController.text = receiver;
+    amountController.text = amount;
+    dateController.text = date;
+    _categorySelected = categoryName;
+    _cardSelected = cardName ?? 'none';
+  }
+
   //소비처, 소비금액,
   final TextEditingController contentController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController installmentController = TextEditingController();
+  final TextEditingController dateController = TextEditingController();
 
   void disposeControllers() {
     contentController.dispose();
     amountController.dispose();
+    installmentController.dispose();
+    dateController.dispose();
     notifyListeners();
   }
 
@@ -71,15 +87,35 @@ class AddProvider with ChangeNotifier {
   String? _amountError;
   String? _installmentError;
   String? _categoryError;
+  String? _dateError;
 
   String? get companyError => _companyError;
   String? get amountError => _amountError;
   String? get installmentError => _installmentError;
   String? get categoryError => _categoryError;
+  String? get dateError => _dateError;
+
+  bool isValidDateFormat(String date) {
+    final regex = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+    return regex.hasMatch(date);
+  }
 
   // 유효성 검사
-  bool validateFields() {
+  bool validateFields({required bool isRepeat}) {
     bool isValid = true;
+
+    if (isRepeat) {
+      if (dateController.text.isEmpty) {
+        _dateError = '날짜를 선택하세요';
+        isValid = false;
+      } else if (isValidDateFormat(dateController.text)) {
+        _dateError = '잘못된 날짜 형식입니다';
+        isValid = false;
+      } else {
+        _dateError = null;
+      }
+    }
+
     if (contentController.text.isEmpty) {
       _companyError = '소비처를 입력해주세요';
       isValid = false;
@@ -133,20 +169,20 @@ class AddProvider with ChangeNotifier {
     _installmentSelected = 'none';
     _installmentIsSelfInput = false;
     _installmentSelfInputValue = '';
-    _categorySelected = '식사';
+    _categorySelected = 'none';
     _cardSelected = 'none';
 
     // 텍스트 필드 컨트롤러 초기화
     contentController.clear();
     amountController.clear();
     installmentController.clear();
-
+    dateController.clear();
     // 오류 메시지 초기화
     _companyError = null;
     _amountError = null;
     _installmentError = null;
     _categoryError = null;
-
+    _dateError = null;
     notifyListeners();
   }
 
@@ -159,6 +195,7 @@ class AddProvider with ChangeNotifier {
       'card': _cardSelected,
       'content': contentController.text,
       'amount': amountController.text,
+      'date': dateController.text,
     };
   }
 }

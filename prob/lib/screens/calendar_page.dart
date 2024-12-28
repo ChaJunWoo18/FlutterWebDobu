@@ -94,10 +94,13 @@ class CalendarHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextButton(
+          style: const ButtonStyle(
+            padding: WidgetStatePropertyAll(EdgeInsets.zero),
+          ),
           onPressed: () {
             calendarProvider.selectedDay == null
                 ? homeProvider.setHomeWidget('mainPage')
@@ -105,23 +108,28 @@ class CalendarHeader extends StatelessWidget {
           },
           child: SizedBox(
             width: 24,
-            child: Transform.translate(
-              offset: const Offset(0, -10),
-              child: Image.asset(preButton),
+            child: Image.asset(preButton),
+          ),
+        ),
+        Transform.translate(
+          offset: const Offset(0, -10),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Transform.scale(
+              scale: 13,
+              child: Transform.rotate(
+                angle: 0.2,
+                child: Image.asset(
+                  calendarImage,
+                  width: 10,
+                ),
+              ),
             ),
           ),
         ),
-        Transform.scale(
-          scale: 4,
-          child: Transform.rotate(
-            angle: 0.2,
-            child: Image.asset(
-              calendarImage,
-              width: 30,
-            ),
-          ),
-        ),
-        const SizedBox(width: 24)
+        const SizedBox(
+          height: 10,
+        )
       ],
     );
   }

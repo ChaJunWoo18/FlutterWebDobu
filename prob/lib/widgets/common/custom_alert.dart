@@ -1,10 +1,90 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:prob/api/auth_api.dart';
 import 'package:prob/provider/loading_provider.dart';
+import 'package:prob/service/provider_clear.dart';
 import 'package:prob/widgets/sign_up_page/reset.dart';
 import 'package:provider/provider.dart';
 
 class MyAlert {
+  static void showDeleteAccountAlert(
+      BuildContext context, String? accessToken) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          contentPadding: const EdgeInsets.all(20.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.red,
+                size: 50,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                '회원 탈퇴',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                '회원 탈퇴를 진행하면 모든 정보가 삭제됩니다.\n계속 진행하시겠습니까?',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // 취소 버튼
+                  OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.grey),
+                    ),
+                    child: const Text(
+                      '취소',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                  // 탈퇴 버튼
+                  ElevatedButton(
+                    onPressed: () {
+                      AuthHelper.clearProvider(context);
+                      AuthApi.deleteUser(accessToken);
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacementNamed(context, '/');
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text(
+                      '탈퇴',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   static void successAccentShow(
       BuildContext context, Map<dynamic, dynamic> msg) {
     showDialog(
@@ -58,74 +138,6 @@ class MyAlert {
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(100, 50),
                   backgroundColor: Colors.blue, // 버튼 배경 파란색
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop(); // 확인 버튼 액션
-                },
-                child: const Text(
-                  '확인',
-                  style: TextStyle(color: Colors.white), // 버튼 텍스트 흰색
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  static void failAccentShow(BuildContext context, Map<dynamic, dynamic> msg) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0), // 모서리 둥글게
-          ),
-          contentPadding: const EdgeInsets.all(20.0),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.cancel_outlined,
-                color: Colors.red,
-                size: 50,
-              ),
-              const SizedBox(height: 10),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  text: msg['main'][0],
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold, // 굵은 텍스트
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: msg['main'][1],
-                      style: const TextStyle(
-                        color: Colors.red, // 파란색 텍스트
-                      ),
-                    ),
-                    TextSpan(text: msg['main'][2]),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                msg['sub'],
-                style: const TextStyle(
-                  color: Colors.grey, // 설명 텍스트 회색
-                  fontSize: 14.0,
-                ),
-              ),
-              const SizedBox(height: 20),
-              // 확인 버튼
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(100, 50),
-                  backgroundColor: Colors.red, // 버튼 배경 파란색
                 ),
                 onPressed: () {
                   Navigator.of(context).pop(); // 확인 버튼 액션

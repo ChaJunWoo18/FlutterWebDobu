@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:prob/provider/budget_provider.dart';
 import 'package:prob/provider/main_page/card_option_provider.dart';
 import 'package:prob/provider/total_provider.dart';
@@ -21,6 +22,7 @@ class MainCard extends StatelessWidget {
             TotalProvider>(
         builder: (context, userProvider, optionProvider, budgetProvider,
             totalProvider, child) {
+      // print('${budgetProvider.remainBudget?.month ?? 0}');
       return Skeletonizer(
         enableSwitchAnimation: true,
         enabled: userProvider.user == null ||
@@ -100,7 +102,7 @@ class MainCard extends StatelessWidget {
       child: Row(
         children: <Widget>[
           CardOptionButton(
-            text: '이번달',
+            text: '이번 달',
             textStyle: textStyle,
             provider: optionProvider,
             weight: optionProvider.isMonth,
@@ -113,7 +115,7 @@ class MainCard extends StatelessWidget {
             indent: 10,
           ),
           CardOptionButton(
-            text: '이번주',
+            text: '이번 주',
             textStyle: textStyle,
             provider: optionProvider,
             weight: optionProvider.isMonth == false,
@@ -125,12 +127,17 @@ class MainCard extends StatelessWidget {
 
   Widget _buildBudgetInfo(CardOptionProvider optionProvider,
       BudgetProvider budgetProvider, TextStyle textStyle) {
+    String formatNumberWithComma(int number) {
+      final formatter = NumberFormat('#,###');
+      return formatter.format(number);
+    }
+
     return Row(
       children: [
         Text(
           optionProvider.isMonth
-              ? '${budgetProvider.remainBudget?.month ?? 0}'
-              : '${budgetProvider.remainBudget?.week ?? 0}',
+              ? formatNumberWithComma(budgetProvider.remainBudget?.month ?? 0)
+              : formatNumberWithComma(budgetProvider.remainBudget?.week ?? 0),
           style: textStyle.copyWith(
               fontWeight: FontWeight.bold, color: imageColor),
         ),
@@ -158,6 +165,9 @@ class CardOptionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
+      style: const ButtonStyle(
+        padding: WidgetStatePropertyAll(EdgeInsets.zero),
+      ),
       onPressed: () => provider.setIsMonth(),
       child: Text(text,
           style: textStyle.copyWith(
@@ -189,17 +199,19 @@ class ProgressBar extends StatelessWidget {
               progressColor: const Color(0xFFE39B3D),
             );
           }
+          final monthRemain = budgetProvider.remainBudget!.month;
+          final weekRemain = budgetProvider.remainBudget!.week;
+          final budget = budgetProvider.budgetData!.curBudget;
+
           return LinearPercentIndicator(
             padding: EdgeInsets.zero,
             percent: optionProvider.isMonth
-                ? budgetProvider.remainBudget!.month <= 0
+                ? monthRemain <= 0 || budget <= 0 || monthRemain > budget
                     ? 0
-                    : (budgetProvider.remainBudget!.month /
-                        budgetProvider.budgetData!.budgetAmount)
-                : budgetProvider.remainBudget!.week <= 0
+                    : (monthRemain / budget)
+                : weekRemain <= 0 || budget <= 0 || monthRemain > budget
                     ? 0
-                    : (budgetProvider.remainBudget!.week /
-                        budgetProvider.budgetData!.budgetAmount),
+                    : (weekRemain / budget),
             lineHeight: 10,
             barRadius: const Radius.circular(10),
             backgroundColor: const Color.fromRGBO(227, 155, 61, 0.32),
