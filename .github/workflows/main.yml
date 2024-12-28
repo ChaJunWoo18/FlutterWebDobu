@@ -1,42 +1,73 @@
-name: Flutter CI
+name: Build and Push Docker Image
 
 on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    # 1. 저장소 코드 체크아웃
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    # 2. Flutter 설치
-    - name: Install Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.22.2'
+      # Docker Hub Login using Access Token
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-    # 3. Flutter Doctor (옵션)
-    - name: Run Flutter Doctor
-      run: flutter doctor -v
-      working-directory: ./prob
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build -t your-dockerhub-junwoocha/flutter-image .
 
-    # 4. 의존성 설치
-    - name: Install dependencies
-      run: flutter pub get
-      working-directory: ./prob
+      # Push Docker image
+      - name: Push Docker image
+        run: docker push your-dockerhub-junwoocha/-image
 
-    # 5. 테스트 실행
-    # - name: Run tests
-    #   run: flutter test
-    #   working-directory: ./prob
 
-    # 6. 빌드 실행 (선택)
-    - name: Build Web
-      run: flutter build web
-      working-directory: ./prob
+# name: Flutter CI
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     # 1. 저장소 코드 체크아웃
+#     - name: Checkout repository
+#       uses: actions/checkout@v3
+
+#     # 2. Flutter 설치
+#     - name: Install Flutter
+#       uses: subosito/flutter-action@v2
+#       with:
+#         flutter-version: '3.22.2'
+
+#     # 3. Flutter Doctor (옵션)
+#     - name: Run Flutter Doctor
+#       run: flutter doctor -v
+#       working-directory: ./prob
+
+#     # 4. 의존성 설치
+#     - name: Install dependencies
+#       run: flutter pub get
+#       working-directory: ./prob
+
+#     # 5. 테스트 실행
+#     # - name: Run tests
+#     #   run: flutter test
+#     #   working-directory: ./prob
+
+#     # 6. 빌드 실행 (선택)
+#     - name: Build Web
+#       run: flutter build web
+#       working-directory: ./prob
