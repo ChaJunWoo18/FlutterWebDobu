@@ -4,8 +4,6 @@ RUN apt update
 RUN apt upgrade -y
 RUN apt install -y wget
 
-
-
 # 필수 패키지 설치
 RUN apt-get update && apt-get install -y \
     curl \
@@ -13,6 +11,8 @@ RUN apt-get update && apt-get install -y \
     git \
     bash \
     snapd
+RUN systemctl start snapd
+RUN systemctl enable snapd
 
 # Snapd 활성화 및 Flutter 설치
 RUN snap install flutter --classic
