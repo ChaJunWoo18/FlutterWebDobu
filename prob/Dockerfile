@@ -16,7 +16,7 @@ WORKDIR /opt
 # Flutter SDK를 GitHub에서 클론
 RUN apt-get install -y curl git unzip xz-utils zip libglu1-mesa
 # java 설치
-RUN apt-get install openjdk-8-jdk
+RUN apt-get install -y openjdk-8-jdk
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 RUN java -version
