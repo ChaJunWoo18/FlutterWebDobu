@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     libglu1-mesa \
     software-properties-common \
     openjdk-8-jdk \
-    && apt-get clean
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # 작업 디렉토리 설정
