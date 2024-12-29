@@ -7,7 +7,8 @@ RUN dpkg --print-foreign-architectures
 RUN apt-get update
 
 RUN apt-get install -y libc6:i386
-RUN apt-get install -y libncurses5:i386
+# RUN apt-get install -y libncurses5:i386
+RUN apt-get install libncurses6:i386
 RUN apt-get install -y libstdc++6:i386
 
 RUN apt-get install -y \
