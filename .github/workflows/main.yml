@@ -39,10 +39,10 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
         
       - name: Build Docker image
-        run: docker build -t junwoocha-flutter:latest ./prob
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}-flutter:latest ./prob
 
       - name: Push Docker image
-        run: docker push junwoocha-flutter:latest
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}-flutter:latest
 
       # 3단계: 배포
       - name: SSH to EC2 and pull the latest Docker image
@@ -52,8 +52,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker pull junwoocha-flutter:latest
-            docker run -d -p 80:80 junwoocha-flutter:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}-flutter:latest
+            docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}-flutter:latest
 
 
 # name: Flutter CI
