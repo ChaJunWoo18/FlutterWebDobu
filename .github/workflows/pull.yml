@@ -23,7 +23,7 @@ jobs:
 
       # 3단계: 배포 - EC2에서 Docker 이미지를 pull
       - name: SSH to EC2 and pull the latest Docker image
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
