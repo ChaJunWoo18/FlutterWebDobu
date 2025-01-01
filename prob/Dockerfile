@@ -56,6 +56,20 @@
 # Flutter SDK 설치 이미지를 사용하여 Flutter 애플리케이션 빌드
 FROM cirrusci/flutter:stable AS build
 
+# Flutter 설치
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Flutter 설치
+RUN git clone https://github.com/flutter/flutter.git /opt/flutter
+ENV PATH="/opt/flutter/bin:${PATH}"
+
+# Flutter 버전 지정 (필요에 따라)
+RUN flutter --version
+
 # 작업 디렉토리 설정
 WORKDIR /app
 
