@@ -10,13 +10,16 @@ RUN apt-get update && apt-get install -y \
 
 # Flutter 설치
 RUN git clone https://github.com/flutter/flutter.git /opt/flutter
-ENV PATH="/opt/flutter/bin:${PATH}"
 
-RUN useradd -ms /bin/bash flutteruser
-USER flutteruser
+# Flutter 디렉토리 권한 변경
 RUN chown -R flutteruser:flutteruser /opt/flutter
+
 # Flutter PATH 설정
 ENV PATH="/opt/flutter/bin:${PATH}"
+
+# 비루트 사용자 추가
+RUN useradd -ms /bin/bash flutteruser
+USER flutteruser
 
 RUN flutter doctor
 
