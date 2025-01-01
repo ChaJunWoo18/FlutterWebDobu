@@ -12,6 +12,9 @@ RUN apt-get update && apt-get install -y \
 RUN git clone https://github.com/flutter/flutter.git /opt/flutter
 ENV PATH="/opt/flutter/bin:${PATH}"
 
+RUN useradd -ms /bin/bash flutteruser
+USER flutteruser
+
 RUN flutter doctor
 
 # 작업 디렉토리 설정
