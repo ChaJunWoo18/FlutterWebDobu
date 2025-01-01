@@ -17,24 +17,29 @@ RUN useradd -ms /bin/bash flutteruser
 # Flutter 디렉토리 권한 변경
 RUN chown -R flutteruser:flutteruser /opt/flutter
 
-# Flutter PATH 설정
-ENV PATH="/opt/flutter/bin:${PATH}"
-
-USER flutteruser
-
-RUN flutter doctor
-
 # 작업 디렉토리 설정
 WORKDIR /app
 
 # Flutter 프로젝트 파일 복사
 COPY . .
 
+# 앱 파일 권한 변경
+RUN chown -R flutteruser:flutteruser /app
+
+# Flutter PATH 설정
+ENV PATH="/opt/flutter/bin:${PATH}"
+
+# Flutter 명령어 실행을 위해 사용자 변경
+USER flutteruser
+
 # Flutter 의존성 설치
 RUN flutter pub get
 
 # Flutter 웹 애플리케이션 빌드
 RUN flutter build web
+
+# 빌드 후 웹 디렉토리 확인
+RUN ls -l /app/build/web
 
 # 최종 배포 환경
 FROM nginx:alpine
