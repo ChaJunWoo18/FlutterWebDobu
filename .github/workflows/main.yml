@@ -15,14 +15,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.22.2'
+      # - name: Install Flutter
+      #   uses: subosito/flutter-action@v2
+      #   with:
+      #     flutter-version: '3.22.2'
           
-      - name: Install dependencies
-        run: flutter pub get
-        working-directory: ./prob
+      # - name: Install dependencies
+      #   run: flutter pub get
+      #   working-directory: ./prob
 
       # 2단계: Docker 빌드
       - name: Set up Docker Buildx
