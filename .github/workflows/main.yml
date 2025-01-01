@@ -59,8 +59,8 @@ jobs:
             sudo docker-compose down
             sudo docker-compose up -d
             sudo docker-compose ps
-            # docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
-            # docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
+    # docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
+    # docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
 
       # - name: Build Docker image
       #   run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest ./prob
