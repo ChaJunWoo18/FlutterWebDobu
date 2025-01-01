@@ -14,6 +14,9 @@ ENV PATH="/opt/flutter/bin:${PATH}"
 
 RUN useradd -ms /bin/bash flutteruser
 USER flutteruser
+RUN chown -R flutteruser:flutteruser /opt/flutter
+# Flutter PATH 설정
+ENV PATH="/opt/flutter/bin:${PATH}"
 
 RUN flutter doctor
 
