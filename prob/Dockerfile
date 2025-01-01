@@ -32,6 +32,8 @@ ENV PATH="/opt/flutter/bin:${PATH}"
 # Flutter 명령어 실행을 위해 사용자 변경
 USER flutteruser
 
+RUN flutter doctor 
+
 # Flutter 의존성 설치
 RUN flutter pub get
 
