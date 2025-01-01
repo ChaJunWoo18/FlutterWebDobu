@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     image: "${DOCKER_HUB_USERNAME}/flutter-dobu:latest"
     ports:
-      - "8080:80"
+      - "80:80"
     networks:
       - app-network
     restart: always
