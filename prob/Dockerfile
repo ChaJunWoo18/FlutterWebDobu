@@ -7,6 +7,8 @@ WORKDIR /app
 # Flutter 프로젝트 파일 복사
 COPY . .
 
+# Flutter 설치(chrome, java,  android studio필요)
+RUN git clone https://github.com/flutter/flutter.git /opt/flutter
 # Flutter 의존성 설치
 RUN flutter pub get
 
