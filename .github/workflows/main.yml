@@ -32,7 +32,8 @@ jobs:
       # 디렉토리 구조 확인
       - name: Install tree and display directory structure
         run: |
-          tree -L 2
+          pwd
+          ll
       # Docker Compose 빌드 및 푸시
       - name: Build and push images using Docker Compose
         run: |
