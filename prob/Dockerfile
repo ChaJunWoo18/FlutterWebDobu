@@ -5,6 +5,9 @@ RUN apt-get update && apt-get install -y \
     git \
     unzip \
     wget apt-transport-https ca-certificates && \
+    fonts-liberation libgbm1 libvulkan1 xdg-utils && \
+    software-properties-common \
+    && apt-get clean \
     rm -rf /var/lib/apt/lists/*
 
 # Flutter 설치(chrome, java,  android studio필요)
@@ -29,8 +32,9 @@ RUN apt-get install -y \
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 RUN java -version
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-RUN apt install -y ./google-chrome-stable_current_amd64.deb
+RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get update && apt install -y ./google-chrome-stable_current_amd64.deb && \
+    rm -rf google-chrome-stable_current_amd64.deb
 
 
 # 비루트 사용자 추가
