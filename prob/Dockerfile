@@ -23,18 +23,27 @@ RUN apt-get install -y \
     software-properties-common \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y openjdk-11-jdk && \
+# 필수 패키지 설치
+RUN apt-get update && apt-get install -y \
+    openjdk-11-jdk curl unzip git wget clang cmake ninja-build pkg-config \
+    libgtk-3-dev && \
     rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update && apt-get install -y \
     clang cmake ninja-build pkg-config && \
     rm -rf /var/lib/apt/lists/*
-
-# ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-# ENV PATH="$JAVA_HOME/bin:$PATH"
-# RUN java -version
 RUN apt-get update && apt-get install -y \
     wget gnupg2 apt-transport-https ca-certificates && \
     rm -rf /var/lib/apt/lists/*
+RUN wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
+    mkdir -p /usr/local/android-sdk/cmdline-tools && \
+    unzip commandlinetools-linux-9477386_latest.zip -d /usr/local/android-sdk/cmdline-tools && \
+    rm commandlinetools-linux-9477386_latest.zip
+ENV ANDROID_HOME=/usr/local/android-sdk
+ENV PATH=$PATH:$ANDROID_HOME/cmdline-tools/bin:$ANDROID_HOME/platform-tools
+RUN yes | sdkmanager --licenses && \
+    sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.1"
+
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \ 
     && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
 RUN apt-get update && apt-get -y install google-chrome-stable
