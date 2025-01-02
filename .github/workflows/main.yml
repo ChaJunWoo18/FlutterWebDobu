@@ -22,26 +22,27 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest ./prob
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
           
-      - name: Install Docker Compose
-        run: |
-          curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          chmod +x /usr/local/bin/docker-compose
+      # - name: Install Docker Compose
+      #   run: |
+      #     curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      #     chmod +x /usr/local/bin/docker-compose
       
-      # .env 파일 생성
-      - name: Create .env file for Docker Compose
-        run: |
-          echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" > .env
-      # 디렉토리 구조 확인
-      - name: Install tree and display directory structure
-        run: |
-          pwd
-          ls -l
-      # Docker Compose 빌드 및 푸시
-      - name: Build and push images using Docker Compose
-        run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml push
+      # # .env 파일 생성
+      # - name: Create .env file for Docker Compose
+      #   run: |
+      #     echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" > .env
+
+      # # Docker Compose 빌드 및 푸시
+      # - name: Build and push images using Docker Compose
+      #   run: |
+      #     docker-compose -f docker-compose.yml build
+      #     docker-compose -f docker-compose.yml push
 
       # 배포
       - name: SSH to EC2 and pull the latest Docker image
@@ -53,18 +54,15 @@ jobs:
           script: |
             mkdir -p /home/ubuntu/dobu/frontend
             cd /home/ubuntu/dobu/frontend
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
+            sudo docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
             
-            sudo docker-compose pull
-            sudo docker-compose down
-            sudo docker-compose up -d
-            sudo docker-compose ps
-    # docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
-    # docker run -d -p 80:80 ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
+ 
+# sudo docker-compose pull
+# sudo docker-compose down
+# sudo docker-compose up -d
+# sudo docker-compose ps
 
-      # - name: Build Docker image
-      #   run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest ./prob
-      # - name: Push Docker image
-      #   run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
       
 # name: Flutter CI
 
