@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
     container_name: flutter
     image: "junwoocha/flutter-dobu:latest"
-    container_name: flutter
     ports:
       - "8081:80"
     volumes:
