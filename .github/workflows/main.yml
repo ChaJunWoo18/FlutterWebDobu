@@ -19,10 +19,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
-      - name: Check directory structure
-        run: |
-          apt-get update && apt-get install -y tree  # tree 설치
-          tree -L 2
+          
       - name: Install Docker Compose
         run: |
           curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
@@ -32,10 +29,13 @@ jobs:
       - name: Create .env file for Docker Compose
         run: |
           echo "DOCKER_HUB_USERNAME=${{ secrets.DOCKER_HUB_USERNAME }}" > .env
-          
+      # 디렉토리 구조 확인
+      - name: Install tree and display directory structure
+        run: |
+          sudo apt-get update && sudo apt-get install -y tree
+          tree -L 2
       # Docker Compose 빌드 및 푸시
       - name: Build and push images using Docker Compose
-        working-directory: ./FlutterWebDobu
         run: |
           docker-compose -f docker-compose.yml build
           docker-compose -f docker-compose.yml push
