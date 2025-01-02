@@ -1,15 +1,19 @@
-# Flutter SDK 설치 이미지를 사용하여 Flutter 애플리케이션 빌드
 FROM cirrusci/flutter:stable AS build
 
-# Flutter 설치
 RUN apt-get update && apt-get install -y \
     curl \
     git \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Flutter 설치
+# Flutter 설치(chrome, android studio필요)
 RUN git clone https://github.com/flutter/flutter.git /opt/flutter
+RUN apt-add-repository ppa:maarten-fonville/android-studio
+RUN apt-get update
+RUN apt-get install android-studio
+RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
+RUN rm google-chrome-stable_current_amd64.deb
 
 # 비루트 사용자 추가
 RUN useradd -ms /bin/bash flutteruser
