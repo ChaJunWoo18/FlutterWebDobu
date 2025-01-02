@@ -21,13 +21,17 @@ RUN apt-get install -y \
     xz-utils \
     libglu1-mesa \
     software-properties-common \
-    openjdk-8-jdk \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
-    
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-ENV PATH="$JAVA_HOME/bin:$PATH"
-RUN java -version
+RUN apt-get update && apt-get install -y openjdk-11-jdk && \
+    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    clang cmake ninja-build pkg-config && \
+    rm -rf /var/lib/apt/lists/*
+
+# ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+# ENV PATH="$JAVA_HOME/bin:$PATH"
+# RUN java -version
 RUN apt-get update && apt-get install -y \
     wget gnupg2 apt-transport-https ca-certificates && \
     rm -rf /var/lib/apt/lists/*
