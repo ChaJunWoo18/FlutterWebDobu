@@ -41,6 +41,6 @@ FROM nginx:alpine
 COPY --from=build /app/build/web /usr/share/nginx/html
 
 # # Nginx 서버 실행
-# EXPOSE 80
-# CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
 
