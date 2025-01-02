@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     wget apt-transport-https ca-certificates && \
     fonts-liberation libgbm1 libvulkan1 xdg-utils && \
     software-properties-common \
-    && apt-get clean \
     rm -rf /var/lib/apt/lists/*
 
 # Flutter 설치(chrome, java,  android studio필요)
