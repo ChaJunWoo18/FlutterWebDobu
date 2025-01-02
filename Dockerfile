@@ -14,7 +14,7 @@ RUN chown -R flutteruser:flutteruser /opt/flutter
 WORKDIR /app
 
 # Flutter 프로젝트 파일 복사
-COPY ./prob .app
+COPY prob/ /app/
 
 # 앱 파일 권한 변경
 RUN chown -R flutteruser:flutteruser /app
@@ -34,12 +34,13 @@ RUN flutter build web
 # 빌드 후 웹 디렉토리 확인
 RUN ls -l /app/build/web
 
-# # 최종 배포 환경 (Nginx)
-# FROM nginx:alpine
+# 최종 배포 환경 (Nginx)
+FROM nginx:alpine
 
-# # 빌드된 Flutter 웹 애플리케이션을 Nginx 디렉토리로 복사
-# COPY --from=build /app/build/web /usr/share/nginx/html
+# 빌드된 Flutter 웹 애플리케이션을 Nginx 디렉토리로 복사
+COPY --from=build /app/build/web /usr/share/nginx/html
 
 # # Nginx 서버 실행
 # EXPOSE 80
 # CMD ["nginx", "-g", "daemon off;"]
+
