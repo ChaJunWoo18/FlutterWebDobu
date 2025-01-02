@@ -33,7 +33,7 @@ jobs:
       - name: Install tree and display directory structure
         run: |
           pwd
-          ll
+          ls -l
       # Docker Compose 빌드 및 푸시
       - name: Build and push images using Docker Compose
         run: |
