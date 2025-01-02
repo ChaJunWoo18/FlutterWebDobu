@@ -6,11 +6,33 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Flutter 설치(chrome, android studio필요)
+# Flutter 설치(chrome, java,  android studio필요)
 RUN git clone https://github.com/flutter/flutter.git /opt/flutter
-RUN apt-add-repository ppa:maarten-fonville/android-studio
-RUN apt-get update
-RUN apt-get install android-studio
+RUN dpkg --add-architecture i386
+RUN apt-get install -y libc6:i386
+# RUN sudo apt-get install -y libncurses5:i386
+RUN sudo apt-get install -y libncurses6:i386
+RUN sudo apt-get install -y libstdc++6:i386
+RUN apt-get install -y \
+    curl \
+    unzip \
+    zip \
+    git \
+    wget \
+    bash \
+    xz-utils \
+    libglu1-mesa \
+    software-properties-common \
+    openjdk-8-jdk \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV PATH="$JAVA_HOME/bin:$PATH"
+RUN java -version
+
+RUN sudo apt-add-repository ppa:maarten-fonville/android-studio
+RUN sudo apt-get install -y android-studio
+
 RUN curl -LO https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN apt-get install -y ./google-chrome-stable_current_amd64.deb
 RUN rm google-chrome-stable_current_amd64.deb
