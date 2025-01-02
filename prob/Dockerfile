@@ -9,10 +9,8 @@ RUN apt-get update && apt-get install -y \
 # Flutter 설치(chrome, java,  android studio필요)
 RUN git clone https://github.com/flutter/flutter.git /opt/flutter
 RUN dpkg --add-architecture i386
-RUN apt-get install -y libc6:i386
-# RUN sudo apt-get install -y libncurses5:i386
-RUN sudo apt-get install -y libncurses6:i386
-RUN sudo apt-get install -y libstdc++6:i386
+RUN apt-get install -y libc6:i386 libncurses6:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+
 RUN apt-get install -y \
     curl \
     unzip \
