@@ -4,9 +4,10 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     unzip \
+    zip \
+    wget \
+    
     wget apt-transport-https ca-certificates && \
-    fonts-liberation libgbm1 libvulkan1 xdg-utils && \
-    software-properties-common \
     rm -rf /var/lib/apt/lists/*
 
 # Flutter 설치(chrome, java,  android studio필요)
@@ -16,11 +17,6 @@ RUN apt-get update
 RUN apt-get install -y libc6:i386 libncurses6:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
 
 RUN apt-get install -y \
-    curl \
-    unzip \
-    zip \
-    git \
-    wget \
     bash \
     xz-utils \
     libglu1-mesa \
@@ -28,12 +24,13 @@ RUN apt-get install -y \
     openjdk-8-jdk \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+    
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ENV PATH="$JAVA_HOME/bin:$PATH"
 RUN java -version
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get update && apt install -y ./google-chrome-stable_current_amd64.deb && \
-    rm -rf google-chrome-stable_current_amd64.deb
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \ 
+    && echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
+RUN apt-get update && apt-get -y install google-chrome-stable
 
 
 # 비루트 사용자 추가
