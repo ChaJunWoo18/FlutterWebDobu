@@ -1,14 +1,30 @@
 # Flutter 빌드 환경
 FROM cirrusci/flutter:stable AS build
 
+# Flutter 설치(chrome, java,  android studio필요)
+RUN git clone https://github.com/flutter/flutter.git /opt/flutter
+
+# 비루트 사용자 추가
+RUN useradd -ms /bin/bash flutteruser
+
+# Flutter 디렉토리 권한 변경
+RUN chown -R flutteruser:flutteruser /opt/flutter
+
 # 작업 디렉토리 설정
 WORKDIR /app
 
 # Flutter 프로젝트 파일 복사
 COPY . .
 
-# Flutter 설치(chrome, java,  android studio필요)
-RUN git clone https://github.com/flutter/flutter.git /opt/flutter
+# 앱 파일 권한 변경
+RUN chown -R flutteruser:flutteruser /app
+
+# Flutter PATH 설정
+ENV PATH="/opt/flutter/bin:${PATH}"
+
+# Flutter 명령어 실행을 위해 사용자 변경
+USER flutteruser
+
 # Flutter 의존성 설치
 RUN flutter pub get
 
