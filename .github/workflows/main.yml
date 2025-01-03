@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest ./prob
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest .
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
           
