@@ -15,7 +15,8 @@ WORKDIR /app
 
 # Flutter 프로젝트 파일 복사
 COPY prob/ /app/
-
+RUN ls -al prob/
+RUN ls -al /app/
 # 앱 파일 권한 변경
 RUN chown -R flutteruser:flutteruser /app
 
