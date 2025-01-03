@@ -39,6 +39,7 @@ jobs:
             mkdir -p /home/ubuntu/dobu/frontend
             cd /home/ubuntu/dobu/frontend
             sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
+            sudo docker stop flutter1
             sudo docker run -d -p 8080:80 --name flutter1 ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
             
 
