@@ -6,10 +6,9 @@ RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
 RUN useradd -ms /bin/bash flutteruser
-RUN chmod -R 755 /app/
-COPY . /app/
-WORKDIR /app/
 
+WORKDIR /app/
+COPY . /app/
 USER flutteruser
 
 # RUN chown -R flutteruser:flutteruser /app
