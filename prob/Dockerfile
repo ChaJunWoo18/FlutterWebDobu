@@ -11,10 +11,7 @@ RUN useradd -ms /bin/bash flutteruser
 RUN chown -R flutteruser:flutteruser /usr/local/flutter
 RUN chown -R flutteruser:flutteruser /app
 USER flutteruser
-RUN flutter doctor -v
-RUN flutter channel master
-RUN flutter upgrade
-RUN flutter config --enable-web
+
 
 COPY . /app/
 WORKDIR /app/
