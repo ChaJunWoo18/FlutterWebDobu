@@ -8,12 +8,11 @@ ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PAT
 RUN mkdir /app/
 
 RUN useradd -ms /bin/bash flutteruser
-RUN chown -R flutteruser:flutteruser /usr/local/flutter
-RUN chown -R flutteruser:flutteruser /app
+RUN chmod -R 755 /app/
+
 USER flutteruser
-
-
 COPY . /app/
+RUN chown -R flutteruser:flutteruser /app
 WORKDIR /app/
 RUN flutter pub get
 RUN flutter build web
