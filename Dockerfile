@@ -14,7 +14,7 @@ RUN chown -R flutteruser:flutteruser /opt/flutter
 WORKDIR /app
 
 # Flutter 프로젝트 파일 복사
-COPY prob/ /app/
+COPY . /app/
 
 # 앱 파일 권한 변경
 RUN chown -R flutteruser:flutteruser /app
