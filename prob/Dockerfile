@@ -12,7 +12,7 @@ RUN chmod -R 755 /app/
 
 USER flutteruser
 COPY . /app/
-RUN chown -R flutteruser:flutteruser /app
+# RUN chown -R flutteruser:flutteruser /app
 WORKDIR /app/
 RUN flutter pub get
 RUN flutter build web
