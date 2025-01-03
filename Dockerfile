@@ -16,7 +16,7 @@ RUN flutter channel master
 RUN flutter upgrade
 RUN flutter config --enable-web
 
-COPY . /app/
+COPY ./prob /app/
 WORKDIR /app/
 RUN flutter pub get
 RUN flutter build web
