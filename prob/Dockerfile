@@ -2,13 +2,12 @@
 FROM cirrusci/flutter:stable AS build-env
 
 # Flutter 설치(chrome, java, android studio필요)
-RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
-ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
+RUN git clone https://github.com/flutter/flutter.git /opt/flutter
+ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
 
 RUN useradd -ms /bin/bash flutteruser
-RUN chown -R flutteruser:flutteruser /usr/local/flutter
-# /app 디렉토리 권한 변경을 root로 먼저 수행
+# RUN chown -R flutteruser:flutteruser /opt/flutter
 COPY . /app/
 USER root
 RUN chown -R flutteruser:flutteruser /app
