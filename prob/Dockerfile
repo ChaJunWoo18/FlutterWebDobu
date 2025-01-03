@@ -11,7 +11,7 @@ WORKDIR /app/
 COPY . /app/
 USER flutteruser
 
-# RUN chown -R flutteruser:flutteruser /app
+RUN chown -R flutteruser:flutteruser /app
 
 RUN flutter pub get
 RUN flutter build web
