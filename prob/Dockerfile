@@ -5,9 +5,8 @@ FROM cirrusci/flutter:stable AS build-env
 RUN git clone https://github.com/flutter/flutter.git /opt/flutter
 ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
-
 RUN useradd -ms /bin/bash flutteruser
-# RUN chown -R flutteruser:flutteruser /opt/flutter
+RUN chown -R flutteruser:flutteruser /opt/flutter
 COPY . /app/
 USER root
 RUN chown -R flutteruser:flutteruser /app
