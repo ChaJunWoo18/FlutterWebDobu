@@ -5,15 +5,15 @@ FROM cirrusci/flutter:stable AS build-env
 RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
-RUN mkdir /app/
-
 RUN useradd -ms /bin/bash flutteruser
 RUN chmod -R 755 /app/
+COPY . /app/
+WORKDIR /app/
 
 USER flutteruser
-COPY . /app/
+
 # RUN chown -R flutteruser:flutteruser /app
-WORKDIR /app/
+
 RUN flutter pub get
 RUN flutter build web
 
