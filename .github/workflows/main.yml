@@ -3,32 +3,48 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
+      - main 
+  pull_request:
+    branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
+    
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      # Docker Hub Login using Access Token
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
 
-      # Build Docker image
       - name: Build Docker image
-        run: docker build -t your-dockerhub-junwoocha/flutter-image .
-
-      # Push Docker image
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest ./prob
       - name: Push Docker image
-        run: docker push your-dockerhub-junwoocha/-image
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
+          
+      # 배포
+      - name: SSH to EC2 and pull the latest Docker image
+        uses: appleboy/ssh-action@master  
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p /home/ubuntu/dobu/frontend
+            cd /home/ubuntu/dobu/frontend
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
+            sudo docker stop flutter1
+            sudo docker rm flutter1
+            sudo docker run -d -p 8080:80 --name flutter1 ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest
+            
 
-
+      
 # name: Flutter CI
 
 # on:

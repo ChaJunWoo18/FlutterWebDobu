@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  flutter-app:
+    build:
+      context: . 
+      dockerfile: Dockerfile
+    container_name: flutter
+    image: "junwoocha/flutter-dobu:latest"
+    ports:
+      - "8081:80"
+    volumes:
+      - ./build/web:/usr/share/nginx/html
+    networks:
+      - flutter-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./flutter.conf:/etc/nginx/conf.d/flutter.conf  # 로컬에서 만든 nginx.conf 파일을 마운트
+      - ./build/web:/usr/share/nginx/html   # Flutter 빌드된 웹 파일을 Nginx 컨테이>너에 마운트
+    ports:
+      - "8080:80"
+    networks:
+      - flutter-network
+
+networks:
+  flutter-network:
+    driver: bridge
