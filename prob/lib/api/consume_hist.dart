@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'package:prob/model/hist_model.dart';
 import 'dart:convert';
 import 'package:prob/model/reqModel/add_consume_hist.dart';
@@ -8,9 +9,9 @@ class ConsumeHistApi {
 
   static Future<List<HistModel>> addHist(
       AddConsumeHist addConsumeHist, String? token) async {
-    const extraUrl = '/add/new_history';
+    const extraUrl = '/consume.history/add/new_history';
     final url = Uri.parse(
-        '$baseUrl$extraUrl?category_name=${addConsumeHist.categoryName}');
+        '${ApiConstants.baseUrl}$extraUrl?category_name=${addConsumeHist.categoryName}');
     final response = await http.post(url,
         headers: {
           'Content-Type': 'application/json',
@@ -40,9 +41,9 @@ class ConsumeHistApi {
   //수정
   static Future<List<HistModel>> editHist(
       AddConsumeHist addConsumeHist, String? token, int editItemId) async {
-    const extraUrl = '/edit/history/';
+    const extraUrl = '/consume.history/edit/history/';
     final url = Uri.parse(
-        '$baseUrl$extraUrl?category_name=${addConsumeHist.categoryName}');
+        '${ApiConstants.baseUrl}$extraUrl?category_name=${addConsumeHist.categoryName}');
     final response = await http.put(url,
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +73,7 @@ class ConsumeHistApi {
 
   //조회
   static Future<Map<String, List<HistModel>>> getHist(String? token) async {
-    final url = Uri.parse(baseUrl);
+    final url = Uri.parse("${ApiConstants.baseUrl}/consume.history");
     final response = await http.get(
       url,
       headers: {
@@ -108,7 +109,7 @@ class ConsumeHistApi {
 
   //삭제
   static Future<List<HistModel>> removeHist(int histId, String? token) async {
-    final url = Uri.parse('$baseUrl/$histId');
+    final url = Uri.parse('${ApiConstants.baseUrl}/consume.history/$histId');
     final response = await http.delete(
       url,
       headers: {

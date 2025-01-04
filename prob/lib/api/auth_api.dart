@@ -1,14 +1,13 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'dart:convert';
 
 import 'package:prob/model/token_model.dart';
 
 class AuthApi {
-  static String baseUrl = "http://localhost:8000";
-
   static Future<AuthModel> getAccessToken(String email, String password) async {
     const extraUrl = "/token";
-    final url = Uri.parse(baseUrl + extraUrl);
+    final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
     final response = await http.post(
       url,
       headers: {
@@ -30,7 +29,7 @@ class AuthApi {
   // 리프레시 토큰을 사용하여 새 액세스 토큰을 얻는 메서드
   static Future<AuthModel> refreshToken(String refreshToken) async {
     const extraUrl = "/refresh";
-    final url = Uri.parse(baseUrl + extraUrl);
+    final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
     final response = await http.post(
       url,
       headers: {
@@ -51,7 +50,7 @@ class AuthApi {
   // 로그아웃 요청
   static Future<void> logout(String? accessToken) async {
     const extraUrl = "/logout";
-    final url = Uri.parse(baseUrl + extraUrl);
+    final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
     final response = await http.post(
       url,
       headers: {
@@ -68,7 +67,7 @@ class AuthApi {
 
   static Future<void> deleteUser(String? accessToken) async {
     const extraUrl = "/delete_account";
-    final url = Uri.parse(baseUrl + extraUrl);
+    final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
 
     final response = await http.delete(
       url,

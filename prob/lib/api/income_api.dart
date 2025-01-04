@@ -1,13 +1,14 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'dart:convert';
 
 import 'package:prob/model/income_model.dart';
 
 class IncomeApi {
-  static String baseUrl = "http://localhost:8000/income";
+  static String baseUrl = "http://localhost:8000";
 
   static Future<IncomeModel> getIncome(String? token) async {
-    final url = Uri.parse('$baseUrl/get/income');
+    final url = Uri.parse('${ApiConstants.baseUrl}/income/get/income');
     final response = await http.get(
       url,
       headers: {
@@ -25,8 +26,8 @@ class IncomeApi {
   }
 
   static Future<IncomeModel> updateIncome(String? token, int newIncome) async {
-    const extraUrl = '/update/income';
-    final url = Uri.parse(baseUrl + extraUrl);
+    const extraUrl = '/income/update/income';
+    final url = Uri.parse("${ApiConstants.baseUrl}$extraUrl");
     final response = await http.put(
       url,
       headers: {

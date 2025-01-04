@@ -1,13 +1,13 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'package:prob/model/card_model.dart';
 import 'dart:convert';
 
 class CardApi {
-  static String baseUrl = "http://localhost:8000/cards";
   //유저 카테고리 조회
   static Future<List<CardModel>> readCards(String? token) async {
-    const extraUrl = '/get/card.list';
-    final url = Uri.parse(baseUrl + extraUrl);
+    const extraUrl = '/cards/get/card.list';
+    final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
     final response = await http.get(
       url,
       headers: {

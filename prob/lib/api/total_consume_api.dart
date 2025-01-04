@@ -1,11 +1,10 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'dart:convert';
 
 import 'package:prob/model/chart_model.dart';
 
 class TotalConsumeApi {
-  static String baseUrl = "http://localhost:8000/total";
-
   //for chart this month total consume 기능 제거
   // static Future<List<ChartModel>> readTotalForChart(String? token) async {
   //   const extraUrl = '/get/category/total/consume';
@@ -31,9 +30,9 @@ class TotalConsumeApi {
   //기간 소비 조회
   static Future<dynamic> readPreiodTotal(
       String startDate, String endDate, String? token) async {
-    const extraUrl = '/get/total/consume/period';
-    final url =
-        Uri.parse('$baseUrl$extraUrl?startDate=$startDate&endDate=$endDate');
+    const extraUrl = '/total/get/total/consume/period';
+    final url = Uri.parse(
+        '${ApiConstants.baseUrl}$extraUrl?startDate=$startDate&endDate=$endDate');
 
     final response = await http.get(
       url,
@@ -62,8 +61,8 @@ class TotalConsumeApi {
 
   //한 달 소비 조회(이번달 or 저번달)
   static Future<int> readPreiodTotalMWD(String mwd, String? token) async {
-    const extraUrl = '/get/total/consume/period_this_MWD';
-    final url = Uri.parse('$baseUrl$extraUrl?MWD=$mwd');
+    const extraUrl = '/total/get/total/consume/period_this_MWD';
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl?MWD=$mwd');
 
     final response = await http.get(
       url,
@@ -92,8 +91,8 @@ class TotalConsumeApi {
 
   //for bar chart
   static Future<List<ChartModel>> readChartData(String? token) async {
-    const extraUrl = '/get/total/consume/chart';
-    final url = Uri.parse(baseUrl + extraUrl);
+    const extraUrl = '/total/get/total/consume/chart';
+    final url = Uri.parse("${ApiConstants.baseUrl}$extraUrl");
 
     final response = await http.get(
       url,

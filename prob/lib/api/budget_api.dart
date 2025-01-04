@@ -1,14 +1,13 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'dart:convert';
 
 import 'package:prob/model/budget_model.dart';
 
 class BudgetApi {
-  static String baseUrl = "http://localhost:8000/budgets";
-
   static Future<BudgetModel> readBudget(String? token) async {
-    const extraUrl = '/get/budget';
-    final url = Uri.parse(baseUrl + extraUrl);
+    const extraUrl = '/budgets/get/budget';
+    final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
     final response = await http.get(
       url,
       headers: {
@@ -26,8 +25,8 @@ class BudgetApi {
   }
 
   static Future<BudgetModel> updateBudget(String? token, int newBudget) async {
-    const extraUrl = '/update/budget';
-    final url = Uri.parse(baseUrl + extraUrl);
+    const extraUrl = '/budgets/update/budget';
+    final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
     final response = await http.put(
       url,
       headers: {

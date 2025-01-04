@@ -1,25 +1,27 @@
-# Flutter 빌드를 위한 환경 설정
-FROM flutter:latest as build-env
+# Flutter 빌드 환경
+FROM cirrusci/flutter:stable AS build-env
 
-# 작업 디렉토리 설정
-WORKDIR /app
+# Flutter 설치(chrome, java, android studio필요)
+RUN git clone https://github.com/flutter/flutter.git /opt/flutter
+ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
-# pubspec.yaml 파일을 복사하고 Flutter 의존성 설치
-COPY pubspec.yaml .
+RUN useradd -ms /bin/bash flutteruser
+RUN chown -R flutteruser:flutteruser /opt/flutter
+COPY . /app/
+USER root
+RUN chown -R flutteruser:flutteruser /app
+
+# 사용자 변경
+USER flutteruser
+
+# Flutter 명령어 실행
+WORKDIR /app/
 RUN flutter pub get
-
-# 나머지 애플리케이션 코드 복사
-COPY . .
-
-# Flutter 웹 애플리케이션 빌드
 RUN flutter build web
 
-# 최종 배포 환경
-FROM ubuntu:latest
+FROM nginx:1.21.1-alpine
+COPY --from=build-env /app/build/web /usr/share/nginx/html
 
-# 빌드된 Flutter 애플리케이션을 Nginx 디렉토리로 복사
-COPY --from=build-env /app/build/web /var/www/html
-
-# Nginx 서버 실행 (이미 설치된 Nginx 사용)
+# Nginx 실행
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

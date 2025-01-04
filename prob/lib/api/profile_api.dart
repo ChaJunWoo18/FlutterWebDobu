@@ -1,13 +1,13 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class ProfileApi {
-  static String baseUrl = "http://localhost:8000";
+import 'package:prob/api/api_url.dart';
 
+class ProfileApi {
   static Future<dynamic> changePassword(
       String password, String newPassword, String? token) async {
     const extraUrl = '/users/update/password';
-    final url = Uri.parse('$baseUrl$extraUrl');
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl');
     final response = await http.put(url,
         headers: {
           'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ class ProfileApi {
   static Future<dynamic> changeNickname(
       String newNickname, String? token) async {
     const extraUrl = '/users/update/nickname';
-    final url = Uri.parse('$baseUrl$extraUrl');
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl');
     final response = await http.put(url,
         headers: {
           'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ class ProfileApi {
   static Future<dynamic> confirmCurrentPassword(
       String password, String? token) async {
     const extraUrl = '/users/confirm/password';
-    final url = Uri.parse('$baseUrl$extraUrl');
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl');
     final response = await http.post(url,
         headers: {
           'Content-Type': 'application/json',

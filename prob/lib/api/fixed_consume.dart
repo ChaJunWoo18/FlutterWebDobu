@@ -1,15 +1,14 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'package:prob/model/fixed_model.dart';
 import 'dart:convert';
 
 import 'package:prob/model/reqModel/add_consume_hist.dart';
 
 class FixedConsumeApi {
-  static String baseUrl = "http://localhost:8000/fixed";
-
   //고정지출 조회
   static Future<List<FixedModel>> getFixed(String? token) async {
-    final url = Uri.parse('$baseUrl/read/fixed-consume');
+    final url = Uri.parse('${ApiConstants.baseUrl}/fixed/read/fixed-consume');
     final response = await http.get(
       url,
       headers: {
@@ -31,7 +30,8 @@ class FixedConsumeApi {
 
   //고정 지출 삭제
   static Future<bool> removeFixed(int histId, String? token) async {
-    final url = Uri.parse('$baseUrl/del/fixed-consume/$histId');
+    final url =
+        Uri.parse('${ApiConstants.baseUrl}/fixed/del/fixed-consume/$histId');
     final response = await http.delete(
       url,
       headers: {
@@ -51,7 +51,7 @@ class FixedConsumeApi {
   static Future<List<FixedModel>> addFixed(
       AddConsumeHist addConsumeHist, String? token) async {
     const extraUrl = '/fixed-consume';
-    final url = Uri.parse('$baseUrl$extraUrl');
+    final url = Uri.parse('${ApiConstants.baseUrl}/fixed$extraUrl');
     final response = await http.post(url,
         headers: {
           'Content-Type': 'application/json',

@@ -1,14 +1,13 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'dart:convert';
 
 import 'package:prob/model/user_model.dart';
 
 class UserApi {
-  static String baseUrl = "http://localhost:8000/users";
-
   static Future<UserModel> readUser(String? token) async {
-    const extraUrl = '/get/me';
-    final url = Uri.parse(baseUrl + extraUrl);
+    const extraUrl = '/users/get/me';
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl');
 
     final response = await http.get(
       url,
@@ -30,8 +29,8 @@ class UserApi {
 
   static Future<bool> signUp(String userId, String password, String nickname,
       List<String> categories) async {
-    const extraUrl = '/signup';
-    final url = Uri.parse(baseUrl + extraUrl);
+    const extraUrl = '/users/signup';
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl');
     final response = await http.post(url,
         headers: {
           'Content-Type': 'application/json',
@@ -52,8 +51,8 @@ class UserApi {
   }
 
   static Future<bool> checkEmail(String userId) async {
-    const extraUrl = '/check_use/email';
-    final url = Uri.parse('$baseUrl$extraUrl?email=$userId');
+    const extraUrl = '/users/check_use/email';
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl?email=$userId');
     final response = await http.get(url, headers: {
       'Content-Type': 'application/json',
     });
@@ -68,8 +67,9 @@ class UserApi {
   }
 
   static Future<bool> checkNickname(String nickname) async {
-    const extraUrl = '/check_use/nickname';
-    final url = Uri.parse('$baseUrl$extraUrl?nickname=$nickname');
+    const extraUrl = '/users/check_use/nickname';
+    final url =
+        Uri.parse('${ApiConstants.baseUrl}$extraUrl?nickname=$nickname');
     final response = await http.get(
       url,
       headers: {

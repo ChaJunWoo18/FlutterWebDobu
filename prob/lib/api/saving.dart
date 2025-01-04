@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:prob/api/api_url.dart';
 import 'dart:convert';
 import 'package:prob/model/saving_model.dart';
 
@@ -6,7 +7,8 @@ class SavingApi {
   static String baseUrl = "http://localhost:8000/saving";
 
   static Future<List<GroupedSavings>> getSaving(String? token) async {
-    final url = Uri.parse('$baseUrl/group/data');
+    const extraUrl = "/saving/group/data";
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl');
     final response = await http.get(
       url,
       headers: {
@@ -33,7 +35,8 @@ class SavingApi {
 
   static Future<List<GroupedSavings>> removeSaving(
       int itemId, String? token) async {
-    final url = Uri.parse('$baseUrl/del/saving/$itemId');
+    final extraUrl = "/saving/del/saving/$itemId";
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl');
     final response = await http.delete(
       url,
       headers: {
@@ -59,8 +62,8 @@ class SavingApi {
 
   static Future<List<GroupedSavings>> addSaving(
       SavingModel savingModel, String? token) async {
-    const extraUrl = '/add/data';
-    final url = Uri.parse('$baseUrl$extraUrl');
+    const extraUrl = '/saving/add/data';
+    final url = Uri.parse('${ApiConstants.baseUrl}$extraUrl');
     final response = await http.post(url,
         headers: {
           'Content-Type': 'application/json',
