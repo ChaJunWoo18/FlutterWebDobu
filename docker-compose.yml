@@ -17,7 +17,7 @@ services:
     image: nginx:alpine
     container_name: nginx
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro # nginx 설정 파일 마운트
+      - /home/ubuntu/dobu/nginx.conf:/etc/nginx/nginx.conf:ro # nginx 설정 파일 마운트
     ports:
       - "80:80"         
     networks:
