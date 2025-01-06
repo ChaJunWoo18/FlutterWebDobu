@@ -16,9 +16,8 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx
-    # volumes:
-    #   - /etc/nginx/nginx.conf:/etc/nginx/nginx.conf:ro 
-    #   - /etc/nginx/conf.d:/etc/nginx/conf.d:ro
+    volumes:
+       - /etc/nginx/conf.d/dobu.conf:/etc/nginx/conf.d/dobu.conf
     ports:
       - "80:80"         
     networks:
