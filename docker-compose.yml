@@ -1,28 +1,49 @@
 version: '3.7'
 
 services:
-  flutter-app:
-    build:
-      context: ./prob   
-      dockerfile: Dockerfile 
-    container_name: flutter
-    volumes:
-      - ./prob:/app     
-    ports:
-      - "8080:8080"          
-    networks:
-      - dobu-network
-
   nginx:
-    image: nginx:alpine
+    build:
+      context: ./prob
+      dockerfile: Dockerfile
     container_name: nginx
     volumes:
-       - /etc/nginx/conf.d/dobu.conf:/etc/nginx/conf.d/dobu.conf
+      - ./prob:/app
+      - ./prob/build/web:/usr/share/nginx/html
+      - /etc/nginx/conf.d/dobu.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "80:80"         
+      - "80:80"
     networks:
       - dobu-network
 
 networks:
   dobu-network:
     driver: bridge
+
+# version: '3.7'
+
+# services:
+#   flutter-app:
+#     build:
+#       context: ./prob   
+#       dockerfile: Dockerfile 
+#     container_name: flutter
+#     volumes:
+#       - ./prob:/app     
+#     ports:
+#       - "8080:8080"          
+#     networks:
+#       - dobu-network
+
+#   nginx:
+#     image: nginx:alpine
+#     container_name: nginx
+#     volumes:
+#        - /etc/nginx/conf.d/dobu.conf:/etc/nginx/conf.d/dobu.conf
+#     ports:
+#       - "80:80"         
+#     networks:
+#       - dobu-network
+
+# networks:
+#   dobu-network:
+#     driver: bridge
