@@ -1,6 +1,6 @@
 FROM ghcr.io/cirruslabs/flutter:3.27.1 AS build-env
 
-WORKDIR /code
+
 
 RUN useradd -ms /bin/bash flutteruser
 
@@ -8,6 +8,7 @@ RUN chown -R flutteruser:flutteruser /sdks/flutter
 # RUN chown -R flutteruser:flutteruser /code
 
 COPY ./prob /code
+WORKDIR /code
 RUN chown -R flutteruser:flutteruser /code
 
 USER flutteruser
