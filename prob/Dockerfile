@@ -1,4 +1,4 @@
-FROM cirrusci/flutter:stable AS build-env
+FROM cirrusci/flutter AS build-env
 
 WORKDIR /app
 RUN useradd -ms /bin/bash flutteruser
