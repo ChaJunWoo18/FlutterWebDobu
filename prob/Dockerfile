@@ -1,9 +1,15 @@
 FROM ghcr.io/cirruslabs/flutter:3.27.1 AS build-env
+
 WORKDIR /app
+
 RUN useradd -ms /bin/bash flutteruser
+
 RUN chown -R flutteruser:flutteruser /sdks/flutter
-RUN chown -R flutteruser:flutteruser /app
+# RUN chown -R flutteruser:flutteruser /app
+
 COPY . /app/
+RUN chown -R flutteruser:flutteruser /app/
+
 USER flutteruser
 
 RUN flutter pub get
