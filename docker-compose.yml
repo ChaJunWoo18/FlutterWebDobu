@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      image: junwoocha/flutter-dobu_nginx:latest
     container_name: nginx_flutter
     ports:
       - "80:80"
