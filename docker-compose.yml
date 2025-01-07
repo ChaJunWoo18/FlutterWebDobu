@@ -3,7 +3,7 @@ version: '3.7'
 services:
   nginx:
     build:
-      context: ./prob
+      context: .
       dockerfile: Dockerfile
     container_name: nginx
     # volumes:
