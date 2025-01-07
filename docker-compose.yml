@@ -13,7 +13,6 @@ services:
       - "80:80"
     networks:
       - dobu-network
-    command: /bin/sh -c "ls -la /app/build/web && nginx -g 'daemon off;'"
 
 networks:
   dobu-network:
