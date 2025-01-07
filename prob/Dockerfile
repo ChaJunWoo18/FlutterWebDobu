@@ -14,6 +14,7 @@ USER flutteruser
 
 RUN flutter pub get
 RUN flutter build web
+RUN ls -l ./prob
 
 FROM nginx:alpine
 COPY --from=build-env /app/build/web /usr/share/nginx/html
