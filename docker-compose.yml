@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: nginx
+    container_name: nginx_flutter
     ports:
       - "80:80"
     networks:
