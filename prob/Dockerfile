@@ -14,10 +14,10 @@ USER flutteruser
 
 RUN flutter pub get
 RUN flutter build web
-RUN ls -l .
+RUN ls -l .build
 
 FROM nginx:alpine
-COPY --from=build-env /app/build/web /usr/share/nginx/html
+COPY --from=build-env ./build/web /usr/share/nginx/html
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
