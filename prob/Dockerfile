@@ -17,7 +17,7 @@ RUN flutter build web
 RUN ls -l ./build/web
 
 FROM nginx:alpine
-COPY --from=build-env ./build/web /usr/share/nginx/html
+COPY --from=build-env /app/build/web /usr/share/nginx/html
 RUN ls -l /usr/share/nginx/html
 
 EXPOSE 80
