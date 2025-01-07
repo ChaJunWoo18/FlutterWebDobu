@@ -4,8 +4,8 @@ WORKDIR /app
 RUN git config --global --add safe.directory /sdks/flutter
 COPY . /app/
 
-RUN useradd -ms /bin/bash flutteruser
-USER flutteruser
+# RUN useradd -ms /bin/bash flutteruser
+# USER flutteruser
 RUN flutter pub get
 RUN flutter build web
 
