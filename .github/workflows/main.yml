@@ -21,16 +21,17 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
           
-      # - name: Run docker-compose
-      #   uses: hoverkraft-tech/compose-action@v2.0.1
-      #   with:
-      #     compose-file: "./docker-compose.yml"
-      #     action: "build"
+      - name: Run docker-compose
+        uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: "./docker-compose.yml"
+          build: true
+          push: true
 
-      - name: Build and Push Docker image
-        run: |
-          docker-compose -f docker-compose.yml build --no-cache
-          docker-compose -f docker-compose.yml push
+      # - name: Build and Push Docker image
+      #   run: |
+      #     docker-compose -f docker-compose.yml build --no-cache
+      #     docker-compose -f docker-compose.yml push
           
       # 배포
       - name: Deploy to EC2
