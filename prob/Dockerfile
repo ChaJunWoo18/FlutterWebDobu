@@ -1,11 +1,11 @@
 FROM cirrusci/flutter:stable AS build-env
 
 WORKDIR /app
-RUN git config --global --add safe.directory /sdks/flutter
+RUN useradd -ms /bin/bash flutteruser
+RUN chown -R flutteruser:flutteruser /sdks/flutter
+RUN chown -R flutteruser:flutteruser /app
 COPY . /app/
-
-# RUN useradd -ms /bin/bash flutteruser
-# USER flutteruser
+USER flutteruser
 RUN flutter pub get
 RUN flutter build web
 
