@@ -7,7 +7,7 @@ RUN chown -R flutteruser:flutteruser /app
 COPY . /app/
 USER flutteruser
 
-RUN flutter --version
+RUN flutter channel stable
 RUN flutter upgrade
 RUN flutter --version
 RUN flutter pub get
