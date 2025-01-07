@@ -3,6 +3,8 @@ FROM cirrusci/flutter:stable AS build-env
 WORKDIR /app
 COPY . /app/
 
+RUN useradd -ms /bin/bash flutteruser
+USER flutteruser
 RUN flutter pub get
 RUN flutter build web
 
