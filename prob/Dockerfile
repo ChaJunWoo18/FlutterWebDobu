@@ -1,12 +1,15 @@
 FROM cirrusci/flutter AS build-env
-RUN flutter --version
-RUN flutter upgrade
+
 WORKDIR /app
 RUN useradd -ms /bin/bash flutteruser
 RUN chown -R flutteruser:flutteruser /sdks/flutter
 RUN chown -R flutteruser:flutteruser /app
 COPY . /app/
 USER flutteruser
+
+RUN flutter --version
+RUN flutter upgrade
+RUN flutter --version
 RUN flutter pub get
 RUN flutter build web
 
