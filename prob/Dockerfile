@@ -1,14 +1,14 @@
 FROM ghcr.io/cirruslabs/flutter:3.27.1 AS build-env
 
-WORKDIR /app
+WORKDIR /code
 
 RUN useradd -ms /bin/bash flutteruser
 
 RUN chown -R flutteruser:flutteruser /sdks/flutter
-# RUN chown -R flutteruser:flutteruser /app
+# RUN chown -R flutteruser:flutteruser /code
 
-COPY . /app/
-RUN chown -R flutteruser:flutteruser /app/
+COPY . /code
+RUN chown -R flutteruser:flutteruser /code
 
 USER flutteruser
 
@@ -18,7 +18,7 @@ RUN ls -l ./build/web
 
 FROM nginx:alpine
 RUN ls -l /usr/share/nginx/html
-COPY --from=build-env /app/build/web /usr/share/nginx/html
+COPY --from=build-env /code/build/web /usr/share/nginx/html
 RUN ls -l /usr/share/nginx/html
 
 EXPOSE 80
