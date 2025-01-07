@@ -27,6 +27,7 @@ jobs:
           compose-file: "./docker-compose.yml"
           build: true
           push: true
+          up: false
 
       # - name: Build and Push Docker image
       #   run: |
