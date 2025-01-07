@@ -20,6 +20,7 @@ RUN ls -l ./build/web
 FROM nginx:alpine
 RUN ls -l /usr/share/nginx/html
 COPY --from=build-env /code/build/web /usr/share/nginx/html
+RUN chown -R root:root /usr/share/nginx/html
 RUN ls -l /usr/share/nginx/html
 
 EXPOSE 80
