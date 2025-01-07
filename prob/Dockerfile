@@ -1,5 +1,6 @@
 FROM cirrusci/flutter AS build-env
-
+RUN flutter --version
+RUN flutter upgrade
 WORKDIR /app
 RUN useradd -ms /bin/bash flutteruser
 RUN chown -R flutteruser:flutteruser /sdks/flutter
