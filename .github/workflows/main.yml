@@ -42,9 +42,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu/dobu
-            docker-compose -f docker-compose.yml pull
-            docker-compose -f docker-compose.yml down
-            docker-compose -f docker-compose.yml up -d
+            docker-compose -f docker-compose.flutter.yml pull
+            docker-compose -f docker-compose.flutter.yml down
+            docker-compose -f docker-compose.flutter.yml up -d
             
 # - name: Build Docker image
 #   run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/flutter-dobu:latest ./prob
