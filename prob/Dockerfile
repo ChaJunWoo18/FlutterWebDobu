@@ -1,4 +1,4 @@
-FROM cirrusci/flutter AS build-env
+FROM ghcr.io/cirruslabs/flutter:3.27.1 AS build-env
 
 WORKDIR /app
 RUN useradd -ms /bin/bash flutteruser
@@ -7,9 +7,9 @@ RUN chown -R flutteruser:flutteruser /app
 COPY . /app/
 USER flutteruser
 
-RUN flutter channel stable
-RUN flutter upgrade
-RUN flutter --version
+# RUN flutter channel stable
+# RUN flutter upgrade
+# RUN flutter --version
 RUN flutter pub get
 RUN flutter build web
 
