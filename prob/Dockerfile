@@ -7,9 +7,7 @@ RUN useradd -ms /bin/bash flutteruser
 RUN chown -R flutteruser:flutteruser /sdks/flutter
 # RUN chown -R flutteruser:flutteruser /code
 
-COPY . /code
-RUN ls -l .
-RUN ls -l /code
+COPY ./prob /code
 RUN chown -R flutteruser:flutteruser /code
 
 USER flutteruser
