@@ -117,9 +117,8 @@ class _LoginFormState extends State<LoginForm> {
         SignButton(
           text: '로그인',
           onPressed: () async {
-            const String email =
-                'wnsdnxla123@gmail.com'; //emailController.text;
-            const String password = 'ASDasd123!'; //passwordController.text;
+            const String email = emailController.text;
+            const String password = passwordController.text;
 
             //로그인해서 토큰 저장
             try {
