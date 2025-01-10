@@ -1,3 +1,3 @@
 class ApiConstants {
-  static const String baseUrl = "http://dobu.kro.kr/api";
+  static const String baseUrl = "http://dobu.kro.kr/api:81";
 }
