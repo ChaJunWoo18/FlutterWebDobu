@@ -4,6 +4,7 @@ import 'package:prob/model/hist_model.dart';
 import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/provider/home_provider.dart';
 import 'package:prob/provider/main_page/calendar_provider.dart';
+import 'package:prob/widgets/common/custom_alert.dart';
 import 'package:prob/widgets/main_page/calendar_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +19,8 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  Future<Map<String, List<HistModel>>> getConsumeHist(token) async {
+  Future<Map<String, List<HistModel>>> getConsumeHist() async {
+    final token = await context.read<AuthProvider>().getToken();
     final consume = await ConsumeHistApi.getHist(token);
     return consume;
   }
@@ -31,49 +33,51 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     final homeProvider = context.read<HomeProvider>();
     final calendarProvider = context.read<CalendarProvider>();
-    final token = context.read<AuthProvider>().accessToken;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 5),
-          child: CalendarHeader(
-              calendarProvider: calendarProvider,
-              homeProvider: homeProvider,
-              preButton: CalendarPage.preButton,
-              calendarImage: CalendarPage.calendarImage),
+    return SizedBox(
+      height: 650,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 5),
+              child: CalendarHeader(
+                  calendarProvider: calendarProvider,
+                  homeProvider: homeProvider,
+                  preButton: CalendarPage.preButton,
+                  calendarImage: CalendarPage.calendarImage),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 23),
+              child: FutureBuilder<Map<String, List<HistModel>>>(
+                future: getConsumeHist(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    MyAlert.failShow(context, '데이터 불러오기 실패', '/');
+                    return const SizedBox.shrink();
+                  } else if (snapshot.hasData) {
+                    // calendarProvider.refresh(snapshot.data!);
+                    return CalendarWidget(
+                      consumeHist: snapshot.data!,
+                      onRefresh: _refreshData,
+                    );
+                  } else {
+                    return CalendarWidget(
+                      consumeHist: const {},
+                      onRefresh: _refreshData,
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 23),
-          child: FutureBuilder<Map<String, List<HistModel>>>(
-            future: getConsumeHist(token),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                // print(snapshot.error);
-                return const Center(
-                  child: Text('데이터를 불러오는 동안 오류가 발생했습니다.'),
-                );
-              } else if (snapshot.hasData) {
-                // calendarProvider.refresh(snapshot.data!);
-                return CalendarWidget(
-                  consumeHist: snapshot.data!,
-                  onRefresh: _refreshData,
-                );
-              } else {
-                return CalendarWidget(
-                  consumeHist: const {},
-                  onRefresh: _refreshData,
-                );
-              }
-            },
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

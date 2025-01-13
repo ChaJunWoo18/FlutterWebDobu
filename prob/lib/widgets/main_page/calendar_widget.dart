@@ -517,50 +517,44 @@ void _addAndEditModal(
   // print(histIsFixed);
   Future<void> saveData(BuildContext context, AddProvider addProvider) async {
     final calendarProvider = context.read<CalendarProvider>();
-    final authProvider = context.read<AuthProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
+    final accessToken = await context.read<AuthProvider>().getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
+    }
 
-    if (isTokenValid) {
-      final accessToken = authProvider.accessToken;
-      try {
-        final fields = addProvider.getFieldValues();
-        late String date;
-        date = calendarProvider.selectedDay!.toIso8601String();
+    try {
+      final fields = addProvider.getFieldValues();
+      late String date;
+      date = calendarProvider.selectedDay!.toIso8601String();
 
-        final addConsumeHist = AddConsumeHist(
-          amount: fields['amount'],
-          categoryName: fields['category'],
-          repeat: false,
-          installment:
-              fields['installment'] == 'none' ? '0' : fields['installment'],
-          content: fields['content'],
-          card: fields['card'],
-          date: date,
-        );
+      final addConsumeHist = AddConsumeHist(
+        amount: fields['amount'],
+        categoryName: fields['category'],
+        repeat: false,
+        installment:
+            fields['installment'] == 'none' ? '0' : fields['installment'],
+        content: fields['content'],
+        card: fields['card'],
+        date: date,
+      );
 
-        final saved = await ConsumeHistApi.addHist(addConsumeHist, accessToken);
+      final saved = await ConsumeHistApi.addHist(addConsumeHist, accessToken);
 
-        calendarProvider.setSelectHist(saved);
-        addProvider.resetFields();
-        //total변화
-        // context
-        //     .read<TotalProvider>()
-        //     .editTotal(isPlus: true, value: int.parse(fields['amount']));
-        if (context.mounted) {
-          showCustomSnackBar(context, '저장 완료');
-          Navigator.of(context).pop();
-          onRefresh();
-        }
-      } catch (e) {
-        // print(e);
-        if (context.mounted) {
-          MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
-        }
-      }
-    } else {
-      // print('토큰만료');
+      calendarProvider.setSelectHist(saved);
+      addProvider.resetFields();
+      //total변화
+      // context
+      //     .read<TotalProvider>()
+      //     .editTotal(isPlus: true, value: int.parse(fields['amount']));
       if (context.mounted) {
-        MyAlert.failShow(context, '다시 로그인 해주세요', null);
+        showCustomSnackBar(context, '저장 완료');
+        Navigator.of(context).pop();
+        onRefresh();
+      }
+    } catch (e) {
+      // print(e);
+      if (context.mounted) {
+        MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
       }
     }
   }
@@ -569,52 +563,48 @@ void _addAndEditModal(
       BuildContext context, AddProvider addProvider, int histId) async {
     final calendarProvider = context.read<CalendarProvider>();
     final authProvider = context.read<AuthProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
+    final accessToken = await context.read<AuthProvider>().getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
+    }
 
-    if (isTokenValid) {
-      final accessToken = authProvider.accessToken;
-      try {
-        final fields = addProvider.getFieldValues();
-        late String date;
+    try {
+      final fields = addProvider.getFieldValues();
+      late String date;
 
-        if (context.mounted) {
-          date = calendarProvider.selectedDay!.toIso8601String();
-        }
-
-        final addConsumeHist = AddConsumeHist(
-          amount: fields['amount'],
-          repeat: false,
-          categoryName: fields['category'],
-          installment:
-              fields['installment'] == 'none' ? '0' : fields['installment'],
-          content: fields['content'],
-          card: fields['card'],
-          date: date,
-        );
-
-        final edited =
-            await ConsumeHistApi.editHist(addConsumeHist, accessToken, histId);
-
-        calendarProvider.setSelectHist(edited);
-        addProvider.resetFields();
-        //total변화
-        // context
-        //     .read<TotalProvider>()
-        //     .editTotal(isPlus: true, value: int.parse(fields['amount']));
-
-        if (context.mounted) {
-          showCustomSnackBar(context, '수정 완료');
-          Navigator.of(context).pop();
-          onRefresh();
-        }
-      } catch (e) {
-        if (context.mounted) {
-          MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
-        }
-      }
-    } else {
       if (context.mounted) {
-        MyAlert.failShow(context, '다시 로그인 해주세요', null);
+        date = calendarProvider.selectedDay!.toIso8601String();
+      }
+
+      final addConsumeHist = AddConsumeHist(
+        amount: fields['amount'],
+        repeat: false,
+        categoryName: fields['category'],
+        installment:
+            fields['installment'] == 'none' ? '0' : fields['installment'],
+        content: fields['content'],
+        card: fields['card'],
+        date: date,
+      );
+
+      final edited =
+          await ConsumeHistApi.editHist(addConsumeHist, accessToken, histId);
+
+      calendarProvider.setSelectHist(edited);
+      addProvider.resetFields();
+      //total변화
+      // context
+      //     .read<TotalProvider>()
+      //     .editTotal(isPlus: true, value: int.parse(fields['amount']));
+
+      if (context.mounted) {
+        showCustomSnackBar(context, '수정 완료');
+        Navigator.of(context).pop();
+        onRefresh();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
       }
     }
   }
@@ -622,30 +612,24 @@ void _addAndEditModal(
   Future<void> removeData(
       BuildContext context, AddProvider addProvider, int histId) async {
     final calendarProvider = context.read<CalendarProvider>();
-    final authProvider = context.read<AuthProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
-
-    if (isTokenValid) {
-      final accessToken = authProvider.accessToken;
-      try {
-        final removed = await ConsumeHistApi.removeHist(histId, accessToken);
-        calendarProvider.setSelectHist(removed);
-        //total변화
-        // context.read<TotalProvider>().justRefresh();
-        addProvider.resetFields();
-        if (context.mounted) {
-          showCustomSnackBar(context, '삭제 완료');
-          Navigator.of(context).pop();
-          onRefresh();
-        }
-      } catch (e) {
-        if (context.mounted) {
-          MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
-        }
-      }
-    } else {
+    final accessToken = await context.read<AuthProvider>().getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
+    }
+    try {
+      final removed = await ConsumeHistApi.removeHist(histId, accessToken);
+      calendarProvider.setSelectHist(removed);
+      //total변화
+      // context.read<TotalProvider>().justRefresh();
+      addProvider.resetFields();
       if (context.mounted) {
-        MyAlert.failShow(context, '다시 로그인 해주세요', null);
+        showCustomSnackBar(context, '삭제 완료');
+        Navigator.of(context).pop();
+        onRefresh();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
       }
     }
   }
@@ -932,8 +916,11 @@ class ModalItem extends StatelessWidget {
     }
 
     void getCategories() async {
-      final token = context.read<AuthProvider>().accessToken;
-      fetchData(token);
+      final accessToken = await context.read<AuthProvider>().getToken();
+      if (accessToken == 'fail' && context.mounted) {
+        MyAlert.failShow(context, '로그인 만료', '/');
+      }
+      fetchData(accessToken);
     }
 
     getCategories();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:prob/model/categories_model.dart';
 import 'package:prob/provider/category_provider.dart';
+import 'package:prob/screens/budget_setting.dart';
 import 'package:provider/provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
@@ -64,58 +65,69 @@ class GridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, childAspectRatio: 3),
-      itemCount: provider.userCategory.length,
-      itemBuilder: (context, index) {
-        final category = provider.userCategory[index];
-        const padding = EdgeInsets.only(left: 14, top: 5);
-        return Container(
-          // height: 75,
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            border: Border.all(width: 0.5, color: const Color(0xFFD5D5D5)),
-            color: provider.userCategory[index].visible
-                ? const Color(0xFFFFFBF5)
-                : const Color(0xFFECEBEB),
-          ),
-          child: Padding(
-            padding: padding,
-            child: Row(
-              children: [
-                Flexible(
-                  flex: 1,
-                  child: SvgPicture.asset(
-                    category.icon,
-                    width: 53,
-                    height: 53,
-                    semanticsLabel: 'X',
+    return Column(
+      children: [
+        const MyPageHeader(
+          title: '카테고리 수정',
+        ),
+        SizedBox(
+          height: MediaQuery.of(context).size.height / 3 * 2,
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, childAspectRatio: 3),
+            itemCount: provider.userCategory.length,
+            itemBuilder: (context, index) {
+              final category = provider.userCategory[index];
+              const padding = EdgeInsets.only(left: 14, top: 5);
+              return Container(
+                // height: 75,
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  border:
+                      Border.all(width: 0.5, color: const Color(0xFFD5D5D5)),
+                  color: provider.userCategory[index].visible
+                      ? const Color(0xFFFFFBF5)
+                      : const Color(0xFFECEBEB),
+                ),
+                child: Padding(
+                  padding: padding,
+                  child: Row(
+                    children: [
+                      Flexible(
+                        flex: 1,
+                        child: SvgPicture.asset(
+                          category.icon,
+                          width: 53,
+                          height: 53,
+                          semanticsLabel: 'X',
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          category.name,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            color: Color(0xFF917046),
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                          flex: 1,
+                          child: Align(
+                              alignment: Alignment.centerRight,
+                              child: AddAndRemButton(
+                                  category: category, provider: provider)))
+                    ],
                   ),
                 ),
-                const SizedBox(width: 15),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    category.name,
-                    maxLines: 1,
-                    style: const TextStyle(
-                      color: Color(0xFF917046),
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                Flexible(
-                    flex: 1,
-                    child: Align(
-                        alignment: Alignment.centerRight,
-                        child: AddAndRemButton(
-                            category: category, provider: provider)))
-              ],
-            ),
+              );
+            },
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 }

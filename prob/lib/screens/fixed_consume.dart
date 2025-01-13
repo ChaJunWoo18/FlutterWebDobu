@@ -6,6 +6,7 @@ import 'package:prob/model/reqModel/add_consume_hist.dart';
 import 'package:prob/provider/add_provider.dart';
 import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/provider/fixed_provider.dart';
+import 'package:prob/screens/budget_setting.dart';
 import 'package:prob/widgets/common/custom_alert.dart';
 import 'package:prob/widgets/main_page/calendar_widget.dart';
 import 'package:provider/provider.dart';
@@ -18,70 +19,75 @@ class FixedConsume extends StatelessWidget {
   Widget build(context) {
     return Container(
       color: const Color(0xFFFFFBF5),
-      child: Column(
-        children: [
-          const SizedBox(height: 55),
-          Container(
-            width: 345,
-            height: 480,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border: Border.all(
-                color: const Color(0xFFC19F64),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const MyPageHeader(
+              title: "고정 지출",
+            ),
+            const SizedBox(height: 10),
+            Container(
+              width: 345,
+              height: 480,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                border: Border.all(
+                  color: const Color(0xFFC19F64),
+                ),
+              ),
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      '고정 지출',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF3B2304),
+                      ),
+                    ),
+                  ),
+                  const Divider(
+                    color: Color(0xFFE39B3D),
+                  ),
+                  SizedBox(
+                    height: 390,
+                    child: Consumer2<AddProvider, FixedProvider>(
+                        builder: (context, addProvider, fixedProvider, child) {
+                      return FixedDataRow(
+                        dividerColor: dividerColor.withOpacity(0.76),
+                        addProvider: addProvider,
+                        fixedProvider: fixedProvider,
+                      );
+                    }),
+                  ),
+                ],
               ),
             ),
-            child: Column(
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40),
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: const Color(0xFFF9DEB9),
+                ),
+                onPressed: () async {
+                  _addModal(context: context, title: '고정지출 추가', histId: -1);
+                },
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 7, horizontal: 26),
                   child: Text(
-                    '고정 지출',
+                    "+ 추가",
                     style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
                       color: Color(0xFF3B2304),
                     ),
                   ),
                 ),
-                const Divider(
-                  color: Color(0xFFE39B3D),
-                ),
-                SizedBox(
-                  height: 390,
-                  child: Consumer2<AddProvider, FixedProvider>(
-                      builder: (context, addProvider, fixedProvider, child) {
-                    return FixedDataRow(
-                      dividerColor: dividerColor.withOpacity(0.76),
-                      addProvider: addProvider,
-                      fixedProvider: fixedProvider,
-                    );
-                  }),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 40),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: const Color(0xFFF9DEB9),
-              ),
-              onPressed: () async {
-                _addModal(context: context, title: '고정지출 추가', histId: -1);
-              },
-              child: const Padding(
-                padding: EdgeInsets.symmetric(vertical: 7, horizontal: 26),
-                child: Text(
-                  "+ 추가",
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Color(0xFF3B2304),
-                  ),
-                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -175,43 +181,39 @@ void _addModal(
     required int histId}) {
   Future<void> saveData(BuildContext context, AddProvider addProvider) async {
     final authProvider = context.read<AuthProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
 
-    if (isTokenValid) {
-      final accessToken = authProvider.accessToken;
-      try {
-        final fields = addProvider.getFieldValues();
+    final accessToken = await authProvider.getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
+    }
+    try {
+      final fields = addProvider.getFieldValues();
 
-        final addConsumeHist = AddConsumeHist(
-          amount: fields['amount'],
-          categoryName: fields['category'],
-          installment: '0',
-          repeat: true,
-          content: fields['content'],
-          card: fields['card'],
-          date: fields['date'].toString().replaceAll(" ", ""),
-        );
+      final addConsumeHist = AddConsumeHist(
+        amount: fields['amount'],
+        categoryName: fields['category'],
+        installment: '0',
+        repeat: true,
+        content: fields['content'],
+        card: fields['card'],
+        date: fields['date'].toString().replaceAll(" ", ""),
+      );
 
-        final updatedData =
-            await FixedConsumeApi.addFixed(addConsumeHist, accessToken);
-        if (context.mounted) {
-          context.read<FixedProvider>().setFixedList(updatedData);
-        }
-
-        addProvider.resetFields();
-
-        if (context.mounted) {
-          showCustomSnackBar(context, '저장 완료');
-          Navigator.of(context).pop();
-        }
-      } catch (e) {
-        if (context.mounted) {
-          MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
-        }
-      }
-    } else {
+      final updatedData =
+          await FixedConsumeApi.addFixed(addConsumeHist, accessToken);
       if (context.mounted) {
-        MyAlert.failShow(context, '다시 로그인 해주세요', null);
+        context.read<FixedProvider>().setFixedList(updatedData);
+      }
+
+      addProvider.resetFields();
+
+      if (context.mounted) {
+        showCustomSnackBar(context, '저장 완료');
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
       }
     }
   }
@@ -219,26 +221,22 @@ void _addModal(
   Future<void> removeData(BuildContext context, AddProvider addProvider) async {
     final fixedProvider = context.read<FixedProvider>();
     final authProvider = context.read<AuthProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
+    final accessToken = await authProvider.getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
+    }
 
-    if (isTokenValid) {
-      final accessToken = authProvider.accessToken;
-      try {
-        final removed = await FixedConsumeApi.removeFixed(histId, accessToken);
+    try {
+      final removed = await FixedConsumeApi.removeFixed(histId, accessToken);
 
-        if (removed && context.mounted) {
-          fixedProvider.removeFixedConsume(histId);
-          showCustomSnackBar(context, '삭제 완료');
-          Navigator.of(context).pop();
-        }
-      } catch (e) {
-        if (context.mounted) {
-          MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
-        }
+      if (removed && context.mounted) {
+        fixedProvider.removeFixedConsume(histId);
+        showCustomSnackBar(context, '삭제 완료');
+        Navigator.of(context).pop();
       }
-    } else {
+    } catch (e) {
       if (context.mounted) {
-        MyAlert.failShow(context, '다시 로그인 해주세요', null);
+        MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
       }
     }
   }

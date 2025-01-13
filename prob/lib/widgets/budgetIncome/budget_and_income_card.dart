@@ -153,41 +153,33 @@ class BudgetAndIncomeBottomCard extends StatelessWidget {
       provider, AuthProvider authProvider, BuildContext context) async {
     if (provider.canEdit) {
       if (provider.validNextValue()) {
-        bool isTokenValid = await authProvider.checkAndRefreshToken();
+        final accessToken = await context.read<AuthProvider>().getToken();
+        if (accessToken == 'fail' && context.mounted) {
+          MyAlert.failShow(context, '로그인 만료', '/');
+        }
 
-        if (isTokenValid) {
-          final accessToken = authProvider.accessToken;
+        try {
+          if (provider is BudgetProvider) {
+            final newBudget = int.parse(provider.controller.text);
+            final saved = await BudgetApi.updateBudget(accessToken, newBudget);
+            provider.setBudget(saved);
+            provider.reset();
+            provider.updateRemainBudget(newBudget: newBudget);
+          } else {
+            final newIncome = int.parse(provider.controller.text);
 
-          try {
-            if (provider is BudgetProvider) {
-              final newBudget = int.parse(provider.controller.text);
-              final saved =
-                  await BudgetApi.updateBudget(accessToken, newBudget);
-              provider.setBudget(saved);
-              provider.reset();
-              provider.updateRemainBudget(newBudget: newBudget);
-            } else {
-              final newIncome = int.parse(provider.controller.text);
-
-              final saved =
-                  await IncomeApi.updateIncome(accessToken, newIncome);
-              provider.setIncome(saved);
-              provider.reset();
-            }
-
-            if (context.mounted) {
-              showCustomSnackBar(context, '저장 완료');
-              provider.toggleCanEdit();
-            }
-          } catch (e) {
-            if (context.mounted) {
-              MyAlert.failShow(context, '요청 실패', null);
-            }
+            final saved = await IncomeApi.updateIncome(accessToken, newIncome);
+            provider.setIncome(saved);
+            provider.reset();
           }
-        } else {
+
           if (context.mounted) {
+            showCustomSnackBar(context, '저장 완료');
             provider.toggleCanEdit();
-            MyAlert.failShow(context, '다시 로그인 해주세요', null);
+          }
+        } catch (e) {
+          if (context.mounted) {
+            MyAlert.failShow(context, '요청 실패', null);
           }
         }
       }

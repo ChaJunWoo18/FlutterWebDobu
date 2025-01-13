@@ -28,7 +28,7 @@ class AuthHelper {
 
     await categoryProvider.immediateSync(context);
     userProvider.clearUser();
-    authProvider.clearTokens();
+    await authProvider.logout();
     totalProvider.clear();
     budgetProvider.clear();
     calendarProvider.clear();

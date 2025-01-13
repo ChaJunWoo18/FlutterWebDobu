@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:prob/api/auth_api.dart';
-import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/service/provider_clear.dart';
-import 'package:provider/provider.dart';
 
 class Header extends StatelessWidget {
   const Header({super.key});
@@ -11,10 +8,10 @@ class Header extends StatelessWidget {
   static const logoutImage = 'assets/images/logout.png';
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.read<AuthProvider>();
+    // final authProvider = context.read<AuthProvider>();
 
     void logout() async {
-      AuthApi.logout(authProvider.accessToken);
+      // await AuthApi.logout(authProvider.accessToken);
 
       AuthHelper.clearProvider(context);
     }

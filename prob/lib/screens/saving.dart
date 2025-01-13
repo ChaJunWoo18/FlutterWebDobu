@@ -44,16 +44,11 @@ class _SavingState extends State<Saving> {
       {required BuildContext context,
       required SavingProvider savingProvider,
       required AuthProvider authProvider}) async {
-    final authProvider = context.read<AuthProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
-    if (isTokenValid) {
-      final token = authProvider.accessToken;
-      savingProvider.fetchSavingsData(token);
-    } else {
-      if (context.mounted) {
-        MyAlert.failShow(context, '다시 로그인 해주세요', '/');
-      }
+    final accessToken = await context.read<AuthProvider>().getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
     }
+    savingProvider.fetchSavingsData(accessToken);
   }
 
   void fetchIncomeWithAuthCheck(
@@ -61,16 +56,12 @@ class _SavingState extends State<Saving> {
       required IncomeProvider incomeProvider,
       required AuthProvider authProvider}) async {
     if (incomeProvider.incomeData == null) {
-      final authProvider = context.read<AuthProvider>();
-      bool isTokenValid = await authProvider.checkAndRefreshToken();
-      if (isTokenValid) {
-        final token = authProvider.accessToken;
-        incomeProvider.fetchIncomeData(token);
-      } else {
-        if (context.mounted) {
-          MyAlert.failShow(context, '다시 로그인 해주세요', '/');
-        }
+      final accessToken = await context.read<AuthProvider>().getToken();
+      if (accessToken == 'fail' && context.mounted) {
+        MyAlert.failShow(context, '로그인 만료', '/');
       }
+
+      incomeProvider.fetchIncomeData(accessToken);
     }
   }
 
@@ -231,58 +222,48 @@ void _addModal(
     required String title,
     required int itemId}) {
   Future<void> saveData(BuildContext context) async {
-    final authProvider = context.read<AuthProvider>();
     final savingProvider = context.read<SavingProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
+    final accessToken = await context.read<AuthProvider>().getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
+    }
 
-    if (isTokenValid) {
-      final accessToken = authProvider.accessToken;
-      try {
-        final newData = savingProvider.getFieldValues();
-        final savingMap = await SavingApi.addSaving(newData, accessToken);
-        savingProvider.setSavings(savingMap);
-        savingProvider.resetFields();
-        if (context.mounted) {
-          showCustomSnackBar(context, '저장 완료');
-          Navigator.of(context).pop();
-        }
-      } catch (e) {
-        // print(e);
-        if (context.mounted) {
-          MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
-        }
-      }
-    } else {
+    try {
+      final newData = savingProvider.getFieldValues();
+      final savingMap = await SavingApi.addSaving(newData, accessToken);
+      savingProvider.setSavings(savingMap);
+      savingProvider.resetFields();
       if (context.mounted) {
-        MyAlert.failShow(context, '다시 로그인 해주세요', '/');
+        showCustomSnackBar(context, '저장 완료');
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      // print(e);
+      if (context.mounted) {
+        MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
       }
     }
   }
 
   Future<void> removeData(BuildContext context, int itemId) async {
-    final authProvider = context.read<AuthProvider>();
     final savingProvider = context.read<SavingProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
+    final accessToken = await context.read<AuthProvider>().getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
+    }
 
-    if (isTokenValid) {
-      final accessToken = authProvider.accessToken;
-      try {
-        final data = await SavingApi.removeSaving(itemId, accessToken);
-        savingProvider.setSavings(data);
-        savingProvider.resetFields();
-        if (context.mounted) {
-          showCustomSnackBar(context, '삭제 완료');
-          Navigator.of(context).pop();
-          Navigator.of(context).pop();
-        }
-      } catch (e) {
-        if (context.mounted) {
-          MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
-        }
-      }
-    } else {
+    try {
+      final data = await SavingApi.removeSaving(itemId, accessToken);
+      savingProvider.setSavings(data);
+      savingProvider.resetFields();
       if (context.mounted) {
-        MyAlert.failShow(context, '다시 로그인 해주세요', null);
+        showCustomSnackBar(context, '삭제 완료');
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        MyAlert.failShow(context, '요청 실패. 다시 시도 해주세요', null);
       }
     }
   }

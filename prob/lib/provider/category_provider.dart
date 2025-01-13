@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:prob/api/category_api.dart';
 import 'package:prob/model/categories_model.dart';
 import 'package:prob/provider/auth_provider.dart';
+import 'package:prob/widgets/common/custom_alert.dart';
 import 'package:provider/provider.dart';
 
 class CategoryProvider with ChangeNotifier {
@@ -31,12 +32,7 @@ class CategoryProvider with ChangeNotifier {
   // 변경 사항 서버로 동기화
   Future<void> _sendChangesToServer(BuildContext context) async {
     final authProvider = context.read<AuthProvider>();
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
-
-    if (!isTokenValid) {
-      return;
-    }
-    final accessToken = authProvider.accessToken;
+    final accessToken = await authProvider.getToken();
     if (_changedCategories.isNotEmpty) {
       try {
         await CategoryApi.syncCategory(_changedCategories, accessToken);
@@ -85,12 +81,11 @@ class CategoryProvider with ChangeNotifier {
     try {
       // AuthProvider에서 토큰 유효성 확인 및 재발급 처리
       final authProvider = context.read<AuthProvider>();
-      bool isTokenValid = await authProvider.checkAndRefreshToken();
 
-      if (!isTokenValid) {
-        return;
+      final accessToken = await authProvider.getToken();
+      if (accessToken == 'fail' && context.mounted) {
+        MyAlert.failShow(context, '로그인 만료', '/');
       }
-      final accessToken = authProvider.accessToken;
       final data = await CategoryApi.readCategories(accessToken);
       _userCategory = data;
       sortCategoryByVisible();

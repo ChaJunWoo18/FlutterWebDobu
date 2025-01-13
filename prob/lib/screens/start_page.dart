@@ -31,26 +31,28 @@ class StartPage extends StatelessWidget {
               stops: [0.0, 0.25, 0.5, 0.75, 1.0], // 색상이 전환되는 위치(0=시작, 0.5 = 중앙)
             ),
           ),
-          child: Padding(
-            padding:
-                const EdgeInsets.only(top: 0, bottom: 40, left: 40, right: 40),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    logo,
-                    width: 240,
-                    fit: BoxFit.contain,
-                  ),
-                  const SizedBox(height: 25),
-                  const BoldText(text: '지금 두부로'),
-                  const BoldText(text: '내 소비습관을 확인하세요!'),
-                  const SizedBox(height: 5),
-                  const SubText(text: '소비내역 확인부터 카테고리별 정리까지'),
-                  const SizedBox(height: 55),
-                  const LoginForm(),
-                ],
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  top: 0, bottom: 40, left: 40, right: 40),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      logo,
+                      width: 240,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 25),
+                    const BoldText(text: '지금 두부로'),
+                    const BoldText(text: '내 소비습관을 확인하세요!'),
+                    const SizedBox(height: 5),
+                    const SubText(text: '소비내역 확인부터 카테고리별 정리까지'),
+                    const SizedBox(height: 55),
+                    const LoginForm(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -126,13 +128,15 @@ class _LoginFormState extends State<LoginForm> {
                 throw Exception();
               }
               final result = await authProvider.login(email, password);
-              if (result == 'login success') {
+              // print(result);
+              if (result) {
                 if (!context.mounted) return;
                 Navigator.pushReplacementNamed(context, "/home");
               } else {
                 throw Exception();
               }
             } catch (e) {
+              // print(e);
               MyAlert.failShow(context, "로그인 정보가 올바르지 않습니다", null);
               passwordController.text = '';
             }
@@ -147,7 +151,7 @@ class _LoginFormState extends State<LoginForm> {
             Expanded(
               child: TextButton(
                 child: const Text(
-                  '아이디/비밀번호 찾기',
+                  '비밀번호 찾기',
                   style: TextStyle(
                     color: StartPageColors.textFieldBorder,
                     fontSize: 13,

@@ -48,22 +48,22 @@ class AuthApi {
   }
 
   // 로그아웃 요청
-  static Future<void> logout(String? accessToken) async {
-    const extraUrl = "/logout";
-    final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
-    final response = await http.post(
-      url,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': 'Bearer $accessToken',
-      },
-    );
+  // static Future<void> logout(String? accessToken) async {
+  //   const extraUrl = "/logout";
+  //   final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
+  //   final response = await http.post(
+  //     url,
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded',
+  //       'Authorization': 'Bearer $accessToken',
+  //     },
+  //   );
 
-    if (response.statusCode == 200) {
-    } else {
-      throw Exception('로그아웃 실패');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //   } else {
+  //     throw Exception('로그아웃 실패');
+  //   }
+  // }
 
   static Future<void> deleteUser(String? accessToken) async {
     const extraUrl = "/delete_account";

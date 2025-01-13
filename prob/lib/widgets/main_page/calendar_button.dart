@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prob/provider/home_provider.dart';
+import 'package:prob/widgets/common/custom_alert.dart';
 import 'dart:math' as math;
 
 import 'package:provider/provider.dart';
@@ -39,7 +40,6 @@ class CalendarButton extends StatelessWidget {
 
   Widget _buttonWidget({
     required BuildContext context,
-    // required String url,
     required image,
     required title,
     required text1,
@@ -55,9 +55,9 @@ class CalendarButton extends StatelessWidget {
     final homeProvider = context.read<HomeProvider>();
     return TextButton(
       style: buttonStyle,
-      onPressed: () {
-        homeProvider.setHomeWidget('calendarPage');
-      },
+      onPressed: title == '달력'
+          ? () => homeProvider.setHomeWidget('calendarPage')
+          : () => MyAlert.successShow(context, '준비 중인 기능이에요'),
       child: Container(
         width: containerWidth,
         decoration: const BoxDecoration(

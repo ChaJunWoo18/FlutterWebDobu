@@ -9,6 +9,7 @@ import 'package:prob/provider/auth_provider.dart';
 import 'package:prob/provider/loading_provider.dart';
 import 'package:prob/provider/total_provider.dart';
 import 'package:prob/provider/user_provider.dart';
+import 'package:prob/widgets/common/custom_alert.dart';
 import 'package:prob/widgets/main_page/calendar_button.dart';
 import 'package:prob/widgets/main_page/main_card.dart';
 import 'package:provider/provider.dart';
@@ -37,19 +38,20 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _checkAndLoadData() async {
-    authProvider = context.read<AuthProvider>();
     final MainLoadingProvider loadingProvider =
         context.read<MainLoadingProvider>();
-    //토큰 만료 여부 후 만료 시 재발급
-    bool isTokenValid = await authProvider.checkAndRefreshToken();
-    if (isTokenValid) {
-      _fetchData();
-    } else {
-      loadingProvider.setError("다시 로그인 해주세요");
+
+    final accessToken = await context.read<AuthProvider>().getToken();
+    if (accessToken == 'fail' && context.mounted) {
+      MyAlert.failShow(context, '로그인 만료', '/');
     }
+
+    _fetchData(accessToken);
+
+    loadingProvider.setError("다시 로그인 해주세요");
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchData(String accessToken) async {
     //loading
     final MainLoadingProvider loadingProvider =
         context.read<MainLoadingProvider>();
@@ -62,19 +64,19 @@ class _MainPageState extends State<MainPage> {
       totalProvider = context.read<TotalProvider>();
 
       if (userProvider.user == null) {
-        final user = await UserApi.readUser(authProvider.accessToken);
+        final user = await UserApi.readUser(accessToken);
         userProvider.setUser(user);
       }
 
       if (budgetProvider.budgetData == null) {
-        final budgetData = await BudgetApi.readBudget(authProvider.accessToken);
+        final budgetData = await BudgetApi.readBudget(accessToken);
         budgetProvider.setBudget(budgetData);
       }
 
-      final monthTotal = await TotalConsumeApi.readPreiodTotalMWD(
-          'month', authProvider.accessToken);
-      final weekTotal = await TotalConsumeApi.readPreiodTotalMWD(
-          'week', authProvider.accessToken);
+      final monthTotal =
+          await TotalConsumeApi.readPreiodTotalMWD('month', accessToken);
+      final weekTotal =
+          await TotalConsumeApi.readPreiodTotalMWD('week', accessToken);
       totalProvider.setMonthTotal(monthTotal);
       totalProvider.setWeekTotal(weekTotal);
       final budget = budgetProvider.budgetData!.curBudget;
@@ -95,14 +97,16 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(color: Color(0xFFFFFBF5)),
-      child: const Padding(
-        padding: EdgeInsets.symmetric(vertical: 37, horizontal: 15),
-        child: Column(
-          children: [
-            MainCard(),
-            SizedBox(height: 37),
-            CalendarButton(),
-          ],
+      child: const SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 37, horizontal: 15),
+          child: Column(
+            children: [
+              MainCard(),
+              SizedBox(height: 37),
+              CalendarButton(),
+            ],
+          ),
         ),
       ),
     );
