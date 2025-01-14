@@ -41,9 +41,10 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /home/ubuntu/dobu
-            docker-compose -f docker-compose.flutter.yml pull
+            cd /home/ubuntu/dobu  
             docker-compose -f docker-compose.flutter.yml down
+            docker system prune -f
+            docker-compose -f docker-compose.flutter.yml pull
             docker-compose -f docker-compose.flutter.yml up -d
             
 # - name: Build Docker image
