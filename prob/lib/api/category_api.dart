@@ -8,6 +8,7 @@ import 'package:prob/model/categories_model.dart';
 class CategoryApi {
   //유저 카테고리 조회
   static Future<List<CategoriesModel>> readCategories(String? token) async {
+    print(token);
     const extraUrl = '/category/categories';
     final url = Uri.parse(ApiConstants.baseUrl + extraUrl);
     final response = await http.get(
