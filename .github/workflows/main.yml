@@ -30,8 +30,8 @@ jobs:
   
       - name: Build and Push Docker image
         run: |
-          docker-compose -f docker-compose.yml build --no-cache
-          docker-compose -f docker-compose.yml push
+          docker-compose -f docker-compose.flutter.yml build --no-cache
+          docker-compose -f docker-compose.flutter.yml push
           
       # 배포
       - name: Deploy to EC2
