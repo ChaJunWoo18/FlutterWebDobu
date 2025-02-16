@@ -34,7 +34,8 @@ class _CalendarPageState extends State<CalendarPage> {
     final homeProvider = context.read<HomeProvider>();
     final calendarProvider = context.read<CalendarProvider>();
 
-    return SizedBox(
+    return Container(
+      color: const Color(0xFFFFFBF5),
       height: 650,
       child: SingleChildScrollView(
         child: Column(

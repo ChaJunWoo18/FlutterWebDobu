@@ -3,6 +3,7 @@ import 'package:prob/provider/add_provider.dart';
 import 'package:prob/provider/barchart/chart_provider.dart';
 import 'package:prob/provider/card_provider.dart';
 import 'package:prob/provider/fixed_provider.dart';
+import 'package:prob/provider/graph_provider.dart';
 import 'package:prob/provider/home_provider.dart';
 import 'package:prob/provider/income_provider.dart';
 import 'package:prob/provider/loading_provider.dart';
@@ -54,6 +55,7 @@ void main() async {
             ChangeNotifierProvider(create: (_) => FixedProvider()),
             ChangeNotifierProvider(create: (_) => SavingProvider()),
             ChangeNotifierProvider(create: (_) => IncomeProvider()),
+            ChangeNotifierProvider(create: (_) => GraphProvider()),
           ],
           child: const MyApp(),
         ),

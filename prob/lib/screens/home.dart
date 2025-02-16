@@ -6,6 +6,7 @@ import 'package:prob/screens/budget_setting.dart';
 import 'package:prob/screens/calendar_page.dart';
 import 'package:prob/screens/edit_category.dart';
 import 'package:prob/screens/fixed_consume.dart';
+import 'package:prob/screens/graph_page.dart';
 import 'package:prob/screens/income_setting.dart';
 import 'package:prob/screens/main_page.dart';
 import 'package:prob/screens/profile.dart';
@@ -56,7 +57,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           ? const MainPage()
           : homeProvider.homeWidget == 'calendarPage'
               ? const CalendarPage()
-              : const CalendarPage(),
+              : const GraphPage(),
       const Saving(),
       _buildProfilePage(homeProvider.profile),
     ];

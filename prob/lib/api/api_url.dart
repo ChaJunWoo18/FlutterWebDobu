@@ -1,4 +1,4 @@
 class ApiConstants {
-  static const String baseUrl = "https://dobu.kro.kr/api";
+  static const String baseUrl = "http://localhost:8000/api";
   //"http://dobu.kro.kr/api";
 }

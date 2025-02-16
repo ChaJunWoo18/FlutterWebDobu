@@ -57,7 +57,8 @@ class CalendarButton extends StatelessWidget {
       style: buttonStyle,
       onPressed: title == '달력'
           ? () => homeProvider.setHomeWidget('calendarPage')
-          : () => MyAlert.successShow(context, '준비 중인 기능이에요'),
+          : () => homeProvider.setHomeWidget('graphPage'),
+      //MyAlert.successShow(context, '준비 중인 기능이에요'),
       child: Container(
         width: containerWidth,
         decoration: const BoxDecoration(
